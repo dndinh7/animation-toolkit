@@ -89,3 +89,9 @@ From terminal, navigate to the folder containing this code. Then, run the follow
 
 Running `cmake ..` will generate Makefiles for this project. Running `make` compiles the program. The last command runs the compiled program. You can also use Visual Studio to run and debug this program. It is important to create the subdirectory `build`, to 
 keep our repository clean of generated files.
+
+TODO 6.3.1: 
+
+![image](https://user-images.githubusercontent.com/72237791/132063077-046d40d6-34f4-4470-80e1-fb60f76cf56f.png)
+
+

@@ -91,7 +91,8 @@ namespace agl {
  */ 
 inline float random() {
   static std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
-  static std::mt19937 generator;
+  static std::random_device rd;
+  static std::mt19937 generator(rd());
   return distribution(generator);
 }
 
@@ -100,7 +101,8 @@ inline float random() {
  */ 
 inline float random(float min, float max) {
   static std::uniform_real_distribution<float> distribution(min, max);
-  static std::mt19937 generator;
+  static std::random_device rd;
+  static std::mt19937 generator(rd());
   return distribution(generator);
 }
 

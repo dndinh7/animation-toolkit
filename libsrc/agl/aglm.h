@@ -100,7 +100,7 @@ inline float random() {
  * @brief Return a random number between min and max [min, max)
  */ 
 inline float random(float min, float max) {
-  static std::uniform_real_distribution<float> distribution(min, max);
+  std::uniform_real_distribution<float> distribution(min, max);
   static std::random_device rd;
   static std::mt19937 generator(rd());
   return distribution(generator);

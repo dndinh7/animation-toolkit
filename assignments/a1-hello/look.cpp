@@ -13,7 +13,7 @@ class Look : public atkui::Framework {
     pivotLeftPupil = vec3(0.30 * width(), 0.5 * height(), 0); // point of rotation for left pupil is center of left eye
     pivotRightPupil = vec3(0.70 * width(), 0.5 * height(), 0); // point of rotation for right pupil is center of right eye
     theta = atan2(_mouseX, _mouseY);
-    a = 42.5f;
+    radius = 42.5f;
   }
 
   virtual void scene() {
@@ -27,15 +27,15 @@ class Look : public atkui::Framework {
 
     setColor(vec3(0));
 
-    vec3 pivot = vec3(_mouseX, _mouseY, 0) - pivotLeftPupil;
+    vec3 pivot = vec3(_mouseX, _mouseY, 0) - pivotLeftPupil; // get the relative pivot
+    theta = atan2(pivot.y, pivot.x); 
+
+    drawSphere(pivotLeftPupil + radius*vec3(cos(theta), sin(theta), 0), 35.0f);
+
+    pivot = vec3(_mouseX, _mouseY, 0) - pivotRightPupil; // get the relative pivot
     theta = atan2(pivot.y, pivot.x);
 
-    drawSphere(pivotLeftPupil + a*vec3(cos(theta), sin(theta), 0), 35.0f);
-
-    pivot = vec3(_mouseX, _mouseY, 0) - pivotRightPupil;
-    theta = atan2(pivot.y, pivot.x);
-
-    drawSphere(pivotRightPupil + a * vec3(cos(theta), sin(theta), 0), 35.0f);
+    drawSphere(pivotRightPupil + radius * vec3(cos(theta), sin(theta), 0), 35.0f);
 
 
     // Query if mouse is down, then if is, we can get the mouse position and call mouseMove
@@ -60,10 +60,10 @@ class Look : public atkui::Framework {
  private:
   int _mouseX;
   int _mouseY;
-  vec3 pivotLeftPupil;
-  vec3 pivotRightPupil;
+  vec3 pivotLeftPupil; // point of rotation based on center of left eye
+  vec3 pivotRightPupil; // point of rotation based on center of right eye
   float theta;
-  float a; // this will be the distance from the pivot
+  float radius; // this will be the distance from the pivot
 };
 
 int main(int argc, char** argv) {

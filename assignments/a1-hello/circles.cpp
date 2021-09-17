@@ -14,7 +14,6 @@ public:
 
 	vec3 position;
 private:
-	
 	float theta;
 };
 
@@ -56,12 +55,12 @@ public:
 	   a = 17.5f;
 	   radius = 12.5f;
 	   centerOffSet = vec3(0.5 * width(), 0.5 * height(), 0);
-	   palette = { // fall sherbert color palette, https://www.color-hex.com/color-palette/112031
-		   vec3(204,200,195) / 255.0f,
-		   vec3(241,215,195) / 255.0f,
-		   vec3(255,176,115) / 255.0f,
-		   vec3(255,148,65) / 255.0f,
-		   vec3(149,95,33) / 255.0f
+	   palette = { // Marielda-Winter in Hieron Color Palette: https://www.color-hex.com/color-palette/112186
+		   vec3(255,192,239) / 255.0f,
+		   vec3(255,178,122) / 255.0f,
+		   vec3(254,229,188) / 255.0f,
+		   vec3(116,167,230) / 255.0f,
+		   vec3(85,79,165) / 255.0f
 	   };
 	   concentricCircles.reserve(N);
 	   for (int i = 0; i < N; i++) {

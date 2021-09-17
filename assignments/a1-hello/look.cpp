@@ -10,8 +10,8 @@ class Look : public atkui::Framework {
   virtual void setup() {
     _mouseX = width() * 0.5;
     _mouseY = height() * 0.5;
-    pivotLeftPupil = vec3(0.30 * width(), 0.5 * height(), 0);
-    pivotRightPupil = vec3(0.70 * width(), 0.5 * height(), 0);
+    pivotLeftPupil = vec3(0.30 * width(), 0.5 * height(), 0); // point of rotation for left pupil is center of left eye
+    pivotRightPupil = vec3(0.70 * width(), 0.5 * height(), 0); // point of rotation for right pupil is center of right eye
     theta = atan2(_mouseX, _mouseY);
     a = 42.5f;
   }
@@ -20,6 +20,8 @@ class Look : public atkui::Framework {
 
     setColor(vec3(1));
 
+
+    // create the white space for the eyes
     drawSphere(vec3(0.30 * width(), 0.5 * height(), -100), 150.0f);
     drawSphere(vec3(0.70 * width(), 0.5 * height(), -100), 150.0f);
 
@@ -36,11 +38,10 @@ class Look : public atkui::Framework {
     drawSphere(pivotRightPupil + a * vec3(cos(theta), sin(theta), 0), 35.0f);
 
 
-
+    // Query if mouse is down, then if is, we can get the mouse position and call mouseMove
     if (mouseIsDown(GLFW_MOUSE_BUTTON_LEFT)) {
         vec2 mousePos = mousePosition();
         mouseMove(mousePos.x, mousePos.y);
-        theta = atan2(_mouseX, _mouseY);
     }
     vec3 target = vec3(_mouseX, _mouseY, 0);
     setColor(vec3(1,0,0));

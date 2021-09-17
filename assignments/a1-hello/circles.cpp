@@ -7,6 +7,7 @@ public:
 	Dot(float x, float y, float theta) : position{ vec3(x, y, 0) }, theta{theta} {
 	}
 
+	// this revolves a singular circle
 	void circulate(float thetaRate, bool CW, float a) {
 		theta = (CW) ? theta - thetaRate : theta + thetaRate; // if clockwise we subtract, CCW we add
 		position = vec3(a * cos(theta), a * sin(theta), 0);
@@ -28,6 +29,7 @@ public:
 		}
 	}
 
+	// this will make the layer revolve
 	void circulateAll(float thetaRate) {
 		for (auto& dot : collection) {
 			dot.circulate(thetaRate, CW, a);
@@ -52,8 +54,7 @@ public:
 
    virtual void setup() {
 	   N = 18; // change N to change number of layers
-	   a = 17.5f;
-	   radius = 12.5f;
+	   radius = 17.5f;
 	   centerOffSet = vec3(0.5 * width(), 0.5 * height(), 0);
 	   palette = { // Marielda-Winter in Hieron Color Palette: https://www.color-hex.com/color-palette/112186
 		   vec3(255,192,239) / 255.0f,
@@ -64,7 +65,7 @@ public:
 	   };
 	   concentricCircles.reserve(N);
 	   for (int i = 0; i < N; i++) {
-		   concentricCircles.push_back(CircleLayer(i % 2 == 0, a*i, palette[i%5]));
+		   concentricCircles.push_back(CircleLayer(i % 2 == 0, radius*i, palette[i%5]));
 	   }
    }
 
@@ -74,17 +75,16 @@ public:
 		   concentric.circulateAll(thetaRate);
 		   setColor(concentric.color);
 		   for (auto& dot : concentric.collection) {
-			   drawSphere(centerOffSet + dot.position, radius);
+			   drawSphere(centerOffSet + dot.position, 12.5f);
 		   }
 	   }
    }
 
 private:
 	std::vector<CircleLayer> concentricCircles;
-	float radius; // this will be the radius for each individual sphere
+	float radius; // this is the radius from the center to the outer circles
 	float thetaRate;
-	float a;
-	int N;
+	int N; // this will be the number of layers
 	vec3 centerOffSet;
 	std::vector<vec3> palette;
 

@@ -13,7 +13,7 @@ This is a gif showing how the eyes rotate to point towards the cursor when the m
 # Exercise 3
 ![particles](https://user-images.githubusercontent.com/72237791/133864072-ed5fd8e4-c301-4bbc-a948-90ec1d351a08.gif)
 
-This is a gif of 100+ particles moving in a direction, and when the particles wrap around when it goes off screen.
+This is a gif of 100+ particles moving in a direction, and the particles wrap around when they go off screen. (Sorry I do not know why the particles have a weird tint when I rendered the gif).
 
 # Exercise 4
 ![circles](https://user-images.githubusercontent.com/72237791/133864183-fccbc4c9-b6c5-4764-9ce7-815cb9d31205.gif)

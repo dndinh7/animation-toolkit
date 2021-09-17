@@ -14,8 +14,6 @@ class Eyes : public atkui::Framework
     }
 
     virtual void scene() {
-        // need to create 4 spheres
-        // 2 are static and the other 2 are dynamic
         setColor(vec3(1, 1, 1));
 
         drawSphere(vec3(0.30 * width(), 0.5 * height(), -100), sizeBig);

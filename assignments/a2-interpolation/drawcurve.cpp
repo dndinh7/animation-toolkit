@@ -40,14 +40,18 @@ class DrawCubic : public atkui::Framework
     drawSphere(B2, 10);
 
 
-    /*setColor(vec3(1));
-    for (int i = 0; i < pointsBernstein.size() - 1; i++) {
-        drawLine(pointsBernstein[i], pointsBernstein[i + 1]);
-    }*/
+    if (bernstein) { // bernstein curve is white
+        setColor(vec3(1));
+        for (int i = 0; i < pointsBernstein.size() - 1; i++) {
+            drawLine(pointsBernstein[i], pointsBernstein[i + 1]);
+        }
+    }
 
-    setColor(vec3(1, 1, 0));
-    for (int i = 0; i < pointsCasteljau.size() - 1; i++) {
-        drawLine(pointsCasteljau[i], pointsCasteljau[i + 1]);
+    if (casteljau) { // casteljau curve is yellow
+        setColor(vec3(1, 1, 0));
+        for (int i = 0; i < pointsCasteljau.size() - 1; i++) {
+            drawLine(pointsCasteljau[i], pointsCasteljau[i + 1]);
+        }
     }
 
   }
@@ -55,17 +59,14 @@ class DrawCubic : public atkui::Framework
   void keyUp(int key, int mod) {
     if (key == GLFW_KEY_1) {
       // draw Bernstein
-        /*setColor(vec3(1));
-        for (int i = 0; i < pointsBernstein.size()-1; i++) {
-            drawLine(pointsBernstein[i], pointsBernstein[i + 1]);
-        }*/
-
-        std::cout << pointsBernstein[0] << std::endl;
+        bernstein = true;
+        casteljau = false;
+        
     }
     else if (key == GLFW_KEY_2) {
       // draw Casteljau
-        std::cout << pointsCasteljau.size() << std::endl;
-        //std::cout << pointsCasteljau[0] << std::endl;
+        casteljau = true;
+        bernstein = false;
     }
   }
 
@@ -86,6 +87,8 @@ class DrawCubic : public atkui::Framework
 
  private:
   int N = 40; // number of intermediate points between B0 and B3
+  bool bernstein= false; // if true then we draw bernstein
+  bool casteljau= false; // if true then we draw casteljau
   vec3 B0 = vec3(100,  50, 0);
   vec3 B1 = vec3(150, 200, 0);
   vec3 B2 = vec3(250, 100, 0);

@@ -70,7 +70,7 @@ class DrawCubic : public atkui::Framework
     }
   }
 
-  vec3 LERP(const vec3& b1, const vec3 b2, float t) {
+  vec3 LERP(const vec3& b1, const vec3& b2, float t) {
       return b1 * (1 - t) + b2 * t;
   }
 

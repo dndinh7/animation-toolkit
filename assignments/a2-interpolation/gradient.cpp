@@ -41,7 +41,7 @@ class Gradient : public atkui::Framework {
 			  py = (j / N) * (height()); // get y coordinate of the cube in the jth col
 			  float ty = py / height();
 
-			  vec3 finalColor = Cx0 * (1 - ty) + Cx1 * ty;
+			  vec3 finalColor = Cx1 * (1 - ty) + Cx0 * ty; // if we want yellow in NW, then ty equals 1, not 0
 			  
 			  cubes.push_back(Squares(vec3(px, py, 0), finalColor));
 

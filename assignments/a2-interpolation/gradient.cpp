@@ -55,7 +55,6 @@ class Gradient : public atkui::Framework {
 		  setColor(square.color);
 		  drawCube(square.position+cubeSize*0.5f, cubeSize); // offset positions by side length/2, so the square do not go off screen
 	  }
-	  //std::cout << cubes.size() << std::endl;
   }
 private:
 	int N;

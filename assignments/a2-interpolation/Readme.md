@@ -13,3 +13,9 @@ This gif shows the construction of the bezier curve in two different ways: Berns
 ![drawcurve2](https://user-images.githubusercontent.com/72237791/134734795-b3d04adc-b352-4c84-a748-23af36a80b16.gif)
 
 To adhere to the instructions, here is the animation where the curves are the same color, so that they are visually identical.
+
+# Task 3: Cubic Motion
+
+![cubicparticle](https://user-images.githubusercontent.com/72237791/134735712-04b75398-b0ac-426a-9a4d-ce338c53fb04.gif)
+
+The gif shows the animation of a sphere moving along a cubic curve path. The sphere takes 5 seconds to get from the start of the curve to the end of the curve. Once the sphere reaches the end of curve, it will wrap around to the beginning to start traversing the curve again.

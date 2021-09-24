@@ -13,7 +13,7 @@ class DrawCubic : public atkui::Framework
       pointsBernstein.push_back(B0);
       for (int i = 1; i <= N; i++) {
           float t = interval * i;
-          pointsBernstein.push_back(bernsteinAlg(B0, B1, B2, B3, t));
+          pointsBernstein.push_back(bernsteinPoly(B0, B1, B2, B3, t));
       }
       pointsBernstein.push_back(B3);
 
@@ -36,14 +36,14 @@ class DrawCubic : public atkui::Framework
     drawSphere(B2, 10);
 
 
-    if (bernstein) { // bernstein curve is white
+    if (bernstein) { 
         setColor(vec3(1));
         for (int i = 0; i < pointsBernstein.size() - 1; i++) {
             drawLine(pointsBernstein[i], pointsBernstein[i + 1]);
         }
     }
 
-    if (casteljau) { // casteljau curve is yellow
+    if (casteljau) { 
         setColor(vec3(1));
         for (int i = 0; i < pointsCasteljau.size() - 1; i++) {
             drawLine(pointsCasteljau[i], pointsCasteljau[i + 1]);
@@ -66,7 +66,7 @@ class DrawCubic : public atkui::Framework
     }
   }
 
-  vec3 bernsteinAlg(const vec3& B0, const vec3& B1, const vec3& B2, const vec3& B3, float t) {
+  vec3 bernsteinPoly(const vec3& B0, const vec3& B1, const vec3& B2, const vec3& B3, float t) {
       vec3 point = (1.0f - t) * (1.0f - t) * (1.0f - t) * B0
           + 3 * t * (1.0f - t) * (1.0f - t) * B1
           + 3 * t * t * (1.0f - t) * B2

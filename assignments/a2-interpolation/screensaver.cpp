@@ -16,14 +16,13 @@ class Screensaver : public atkui::Framework {
 	  color2 = vec3(agl::random(), agl::random(), agl::random());
 	  colorCur = color1;
 
-	  T = 0.1f;
-
   }
 
   void scene() {
 	  
 	  t += dt();
 
+	  // it takes 1 second before current reaches curve2 and we create a new curve
 	  if (t > 1) {
 		  t = 0;
 		  curve1 = current;
@@ -36,6 +35,7 @@ class Screensaver : public atkui::Framework {
 	  colorInterpolate(colorCur, color1, color2, t);
 
 	  timer += dt();
+	  // the timer goes above T, we add current curve to trail and reset the timer
 	  if (timer > T) {
 		  timer = 0;
 		  trails.push_back(current);
@@ -43,6 +43,7 @@ class Screensaver : public atkui::Framework {
 	  }
 	  if (trails.size() > maxTrails) {
 		  trails.pop_front();
+		  trailColor.pop_front();
 	  }
 
 
@@ -131,12 +132,12 @@ private:
 	vec3 color1;
 	vec3 color2;
 	vec3 colorCur;
-	float t = 00.f;
+	float t = 0.0f;
 	std::list<std::vector<vec3>> trails;
 	std::list<vec3> trailColor;
-	float T; // T seconds in which we save the current curve into trails
+	float T= 0.2f; // T seconds in which we save the current curve into trails
 	float timer = 0.0f; // timer for the trails interval
-	int maxTrails= 50;
+	int maxTrails= 30;
 };
 
 int main(int argc, char** argv) {

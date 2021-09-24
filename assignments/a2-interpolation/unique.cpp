@@ -18,9 +18,9 @@ public:
     // need to get parameter t by dividing lifetime by stop_time
     vec3 getPos(float stop_time) {
         // I will break the trajectory of the ball into 4 segments
-        // The ball will first bounce after 8/16 of the stop_time interval
-        // the ball will bounce a second time after 13/16 of the stop_time interval
-        // the ball wil bounce a third time after 15/16 of the stop_time interval
+        // The ball will first bounce after 0.30 of the stop_time interval
+        // the ball will bounce a second time after 0.60 of the stop_time interval
+        // the ball wil bounce a third time after 0.80 of the stop_time interval
         // the ball will stop bouncing after 1 of the stop_time interval
 
         float stop_first_segment = stop_time * 0.30f; // t = (lifetime - start) / (end - start)
@@ -47,7 +47,6 @@ public:
         }
         t = 1; // clamp position at the ending position
         LERPALL(fourthSeg[0], fourthSeg[1], fourthSeg[2], fourthSeg[3], t);
- 
 
 
     }
@@ -55,14 +54,15 @@ public:
     
     // Reference: http://nurbscalculator.in/
     // I used control points to emulate what trajectory I wanted
-    // This method will create the first segment and call the function to create the second segment
+    // This method will create the first segment and call the function to create the second segment and so forth
+    // This is a lot of hard coding because I need to create each control point for each segment
     void createSeg(float screenWidth, float screenHeight) {
         vec3 B0_1 = vec3(0, screenHeight * 0.75f, 0);
-        vec3 B3_1 = vec3(agl::random(screenWidth * 0.2f, screenWidth * 0.5f), radius, 0);
+        vec3 B3_1 = vec3(agl::random(screenWidth * 0.15f, screenWidth * 0.5f), radius/2, 0); // for some reason, radius is like diameter instead?
 
         // want to emulate a ball throw with the intermediate control points, so parabolic trajectory
         vec3 B1_1 = vec3(B3_1.x / 3, B0_1.y, 0); 
-        vec3 B2_1 = vec3(B3_1.x, B0_1.y*0.75, 0); // I am trying to simulate acceleration by making two control points
+        vec3 B2_1 = vec3(B3_1.x, B0_1.y*0.75, 0); // I am trying to simulate acceleration
 
         firstSeg[0] = B0_1;
         firstSeg[1] = B1_1;
@@ -77,10 +77,10 @@ public:
     // I will use the third of the height from the starting height as the height for the intermediate control points
     void createSeg2(float width_prev, float height, const vec3& B3_1) {
         vec3 B0_2 = B3_1;
-        vec3 B3_2 = vec3(B0_2.x + width_prev * 0.50f, radius, 0); // should be on the floor again after the bounce
+        vec3 B3_2 = vec3(B0_2.x + width_prev * 0.50f, radius/2, 0); // should be on the floor again after the bounce
 
-        vec3 B1_2 = vec3(B0_2.x + (B3_2.x - B0_2.x) * 0.25f, height / 3 + radius, 0);
-        vec3 B2_2 = vec3(B0_2.x + (B3_2.x - B0_2.x) * 0.75f, height / 3 + radius, 0);
+        vec3 B1_2 = vec3(B0_2.x + (B3_2.x - B0_2.x) * 0.25f, height / 3 + radius/2, 0);
+        vec3 B2_2 = vec3(B0_2.x + (B3_2.x - B0_2.x) * 0.75f, height / 3 + radius/2, 0);
 
         secondSeg[0] = B0_2;
         secondSeg[1] = B1_2;
@@ -93,10 +93,10 @@ public:
 
     void createSeg3(float width_prev, float height, const vec3& B3_2) {
         vec3 B0_3 = B3_2;
-        vec3 B3_3 = vec3(B0_3.x + width_prev * 0.50f, radius, 0);
+        vec3 B3_3 = vec3(B0_3.x + width_prev * 0.50f, radius/2, 0);
 
-        vec3 B1_3 = vec3(B0_3.x + (B3_3.x - B0_3.x) * 0.25f, height / 3 + radius, 0);
-        vec3 B2_3 = vec3(B0_3.x + (B3_3.x - B0_3.x) * 0.75f, height / 3 + radius, 0);
+        vec3 B1_3 = vec3(B0_3.x + (B3_3.x - B0_3.x) * 0.25f, height / 3 + radius/2, 0);
+        vec3 B2_3 = vec3(B0_3.x + (B3_3.x - B0_3.x) * 0.75f, height / 3 + radius/2, 0);
 
         thirdSeg[0] = B0_3;
         thirdSeg[1] = B1_3;
@@ -108,10 +108,10 @@ public:
 
     void createSeg4(float width_prev, float height, const vec3& B3_3) {
         vec3 B0_4 = B3_3;
-        vec3 B3_4 = vec3(B0_4.x + width_prev * 0.50f, radius, 0);
+        vec3 B3_4 = vec3(B0_4.x + width_prev * 0.50f, radius/2, 0);
 
-        vec3 B1_4 = vec3(B0_4.x + (B3_4.x - B0_4.x) * 0.25f, height / 3 + radius, 0);
-        vec3 B2_4 = vec3(B0_4.x + (B3_4.x - B0_4.x) * 0.75f, height / 3 + radius, 0);
+        vec3 B1_4 = vec3(B0_4.x + (B3_4.x - B0_4.x) * 0.25f, height / 3 + radius/2, 0);
+        vec3 B2_4 = vec3(B0_4.x + (B3_4.x - B0_4.x) * 0.75f, height / 3 + radius/2, 0);
 
         fourthSeg[0] = B0_4;
         fourthSeg[1] = B1_4;
@@ -147,7 +147,7 @@ private:
     vec3  position;
     vec3  color;
     float lifetime= 0.0f; // how long the ball has since been created
-    vec3  firstSeg[4]; // indices represent the control points
+    vec3  firstSeg[4]; // indices represent the control points: index 0 = b0, index 1 = b1, etc...
     vec3  secondSeg[4];
     vec3  thirdSeg[4];
     vec3  fourthSeg[4];
@@ -175,7 +175,7 @@ public:
         // inspiration for the motion https://easings.net/en#easeOutBounce
         // use bezier curve to simulate an ease out bounce
         // want the first two points to be high to low
-        // then when it bounces, the two endpoints should have same y, but farther x, but control points up
+        // then when it bounces, the two endpoints should have same y, but farther x
         // N = 4 bounces
         // all points will be on the floor except for the intial point, offset by the radius of the ball
 

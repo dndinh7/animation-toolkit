@@ -8,5 +8,8 @@ This is a grid of N by N squares, where the colors of the squares between the fo
 # Task 2: Draw Curve
 ![drawcurve](https://user-images.githubusercontent.com/72237791/134733953-6204b1cb-e0bc-4d63-adbc-73fe2fd8c70e.gif)
 
-This gif shows the construction of the bezier curve in two different ways: Bernstein's algorithm and de Casteljau's algorithm. When "1" is pressed, the curve shown was created by Bernstein's algorithm and has a white color. When "2" is pressed, the curve shown was created by de Casteljau's algorithm and has a yellow color.
+This gif shows the construction of the bezier curve in two different ways: Bernstein's curve polynomial and de Casteljau's algorithm. When "1" is pressed, the curve shown was created by Bernstein's curve polynomial and has a white color. When "2" is pressed, the curve shown was created by de Casteljau's algorithm and has a yellow color.
 
+![drawcurve2](https://user-images.githubusercontent.com/72237791/134734795-b3d04adc-b352-4c84-a748-23af36a80b16.gif)
+
+To adhere to the instructions, here is the animation where the curves are the same color, so that they are visually identical.

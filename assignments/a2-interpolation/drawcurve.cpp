@@ -44,7 +44,7 @@ class DrawCubic : public atkui::Framework
     }
 
     if (casteljau) { // casteljau curve is yellow
-        setColor(vec3(1, 1, 0));
+        setColor(vec3(1));
         for (int i = 0; i < pointsCasteljau.size() - 1; i++) {
             drawLine(pointsCasteljau[i], pointsCasteljau[i + 1]);
         }

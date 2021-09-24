@@ -17,6 +17,7 @@ class ParticleCubic : public atkui::Framework {
   }
 
   void scene() {
+    // after 5 seconds t will go back to 0 and the dot will wrap back around
     float t= fmod(elapsedTime(), 5.0f) / 5.0f;
 
     position = LERPALL(B0, B1, B2, B3, t);
@@ -46,6 +47,7 @@ class ParticleCubic : public atkui::Framework {
   }
 
 private:
+    // hard coded control points, so I can create a curve for the dot to travel through
     vec3 B0 = vec3(width()*0.25f, height()*0.20f, 0);
     vec3 B1 = vec3(width()/3, height()*0.6f, 0);
     vec3 B2 = vec3(width()*2/3, height()*0.4f, 0);

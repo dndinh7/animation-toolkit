@@ -13,11 +13,7 @@ class DrawCubic : public atkui::Framework
       pointsBernstein.push_back(B0);
       for (int i = 1; i <= N; i++) {
           float t = interval * i;
-          vec3 point = (1.0f - t) * (1.0f - t) * (1.0f - t) * B0 
-              + 3 * t * (1.0f - t) * (1.0f - t) * B1 
-              + 3 * t * t * (1.0f - t) * B2 
-              + t * t * t * B3;
-          pointsBernstein.push_back(point);
+          pointsBernstein.push_back(bernsteinAlg(B0, B1, B2, B3, t));
       }
       pointsBernstein.push_back(B3);
 
@@ -70,10 +66,20 @@ class DrawCubic : public atkui::Framework
     }
   }
 
+  vec3 bernsteinAlg(const vec3& B0, const vec3& B1, const vec3& B2, const vec3& B3, float t) {
+      vec3 point = (1.0f - t) * (1.0f - t) * (1.0f - t) * B0
+          + 3 * t * (1.0f - t) * (1.0f - t) * B1
+          + 3 * t * t * (1.0f - t) * B2
+          + t * t * t * B3;
+      return point;
+
+  }
+
   vec3 LERP(const vec3& b1, const vec3& b2, float t) {
       return b1 * (1 - t) + b2 * t;
   }
 
+  // This is basically de Casteljau's algorithm, but I named it LERPALL
   vec3 LERPALL(const vec3& b0, const vec3& b1, const vec3& b2, const vec3& b3, float t) {
       vec3 b01 = LERP(b0, b1, t);
       vec3 b11 = LERP(b1, b2, t);

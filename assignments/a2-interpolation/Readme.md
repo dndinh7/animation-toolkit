@@ -19,3 +19,10 @@ To adhere to the instructions, here is the animation where the curves are the sa
 ![cubicparticle](https://user-images.githubusercontent.com/72237791/134735712-04b75398-b0ac-426a-9a4d-ce338c53fb04.gif)
 
 The gif shows the animation of a sphere moving along a cubic curve path. The sphere takes 5 seconds to get from the start of the curve to the end of the curve. Once the sphere reaches the end of curve, it will wrap around to the beginning to start traversing the curve again.
+
+# Task 4: Screensaver
+
+![screensaver](https://user-images.githubusercontent.com/72237791/134752521-885253db-c906-4063-b03f-a0dfa0dab84f.gif)
+
+The gif shows an animation of a "screensaver" where we interpolate from one curve to another. We also store past curves to create a trailing effect. 
+

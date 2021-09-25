@@ -93,11 +93,11 @@ class Screensaver : public atkui::Framework {
 	  int N= 40; // number of intermediate points
 	  std::vector<vec3> points;
 
-	  // offset by 25.0 so we don't get too close to the border
-	  vec3 B0 = vec3(agl::random(25.0f, width() - 25.0f), agl::random(25.0f, height() - 25.0f), 0);
-	  vec3 B1 = vec3(agl::random(25.0f, width() - 25.0f), agl::random(25.0f, height() - 25.0f), 0);
-	  vec3 B2 = vec3(agl::random(25.0f, width() - 25.0f), agl::random(25.0f, height() - 25.0f), 0);
-	  vec3 B3 = vec3(agl::random(25.0f, width() - 25.0f), agl::random(25.0f, height() - 25.0f), 0);
+	  // offset by 10.0 so we don't get too close to the border
+	  vec3 B0 = vec3(agl::random(10.0f, width() - 10.0f), agl::random(10.0f, height() - 10.0f), 0);
+	  vec3 B1 = vec3(agl::random(10.0f, width() - 10.0f), agl::random(10.0f, height() - 10.0f), 0);
+	  vec3 B2 = vec3(agl::random(10.0f, width() - 10.0f), agl::random(10.0f, height() - 10.0f), 0);
+	  vec3 B3 = vec3(agl::random(10.0f, width() - 10.0f), agl::random(10.0f, height() - 10.0f), 0);
 
 	  float interval = 1.0f / (N + 1);
 	  points.push_back(B0);
@@ -135,9 +135,9 @@ private:
 	float t = 0.0f;
 	std::list<std::vector<vec3>> trails;
 	std::list<vec3> trailColor;
-	float T= 0.2f; // T seconds in which we save the current curve into trails
+	float T= 0.1f; // T seconds in which we save the current curve into trails
 	float timer = 0.0f; // timer for the trails interval
-	int maxTrails= 30;
+	int maxTrails= 50;
 };
 
 int main(int argc, char** argv) {

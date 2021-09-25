@@ -30,4 +30,4 @@ The gif shows an animation of a "screensaver" where we interpolate from one curv
 
 ![unique](https://user-images.githubusercontent.com/72237791/134752702-b40db58a-7d26-4dee-a75c-cc2c7361702f.gif)
 
-My unique animation is trying to simulate throwing a ball and having it bounce 4 times before stopping. I naively implemented this using 4 segments. To throw a ball: press 'spacebar' to throw one ball and you can repeatedly throw them. The balls will disappear after the number of balls hits a certain threshold.
+My unique animation is trying to simulate throwing a ball and having it bounce 4 times before stopping. I naively implemented this using 4 segments. To throw a ball: press 'spacebar', and you can repeatedly throw them. The balls will disappear after the number of balls hits a certain threshold, in this case it's 50.

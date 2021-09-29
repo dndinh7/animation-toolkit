@@ -7,6 +7,8 @@ Helpful Links:
 * [CS317 course website](https://brynmawr-cs317-f21.github.io/website/)
 * [Assignment 00: Hello CS317](https://brynmawr-cs317-f21.github.io/website/asst00.html)
 * [Assignment 01: Hello Animation](https://brynmawr-cs317-f21.github.io/website/asst01-hello.html)
+* [Assignment 02: Howl's moving casteljau](https://brynmawr-cs317-f21.github.io/website/asst02-interpolation.html)
+* [Assignment 03: The Catmull-ROM COM](https://brynmawr-cs317-f21.github.io/website/asst03-splines.html)
 
 # Tools and dependencies
 
@@ -95,5 +97,3 @@ From terminal, navigate to the folder containing this code. Then, run the follow
 
 Running `cmake ..` will generate Makefiles for this project. Running `make` compiles the program. The last command runs the compiled program. You can also use Visual Studio to run and debug this program. It is important to create the subdirectory `build`, to 
 keep our repository clean of generated files.
-
-

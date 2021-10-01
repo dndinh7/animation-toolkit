@@ -105,6 +105,31 @@ glm::vec3 Spline::getValue(float t) const {
   // todo: your code here
   // compute the segment containing t
   // compute the value [0, 1] along the segment for interpolation
-  return glm::vec3(0); 
+
+  // use duration to clamp t if it goes past it
+  if (getDuration() == 0) return glm::vec3(0);
+
+  float u; // normalized time
+  int segment; // will contain which segment of the line we're in
+
+  if (t <= 0) {
+      u = 0;
+      segment = 0; // first segment
+  }
+  else if (t >= getDuration()) {
+      u = 1;
+      segment = getDuration() - 1; // last segment
+  }
+  else {
+      for (int i = 0; i < getNumKeys(); i++) {
+          if (t <= getTime(i)) { // this includes the endpoint
+              segment = i - 1; // the segment will be 1 less than the endpoint that "contains" it
+              // the number associated with segment also corresponds to the first point of the segment
+          }
+      }
+      u = (t - getTime(segment)) / (getTime(segment + 1) - getTime(segment));
+  }
+
+  return mInterpolator->interpolate(segment, u);
 }
 

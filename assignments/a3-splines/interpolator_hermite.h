@@ -80,7 +80,7 @@ public:
                         v = getClampDirection();
                     }
                     else { // natural
-                        p0 = getControlPoint((i-1) * 2);
+                        p0 = getControlPoint((i - 1) * 2);
                         p1 = getControlPoint(i * 2);
                         v = 3.0f * (p1 - p0);
                     }
@@ -126,25 +126,28 @@ public:
                 }
             }
             else { // natural end points
+                // initialize first row of A matrix
                 for (int j = 0; j < numPoints; j++) {
                     if (j == 0) {
                         A(0, j) = 2;
-                        A(numPoints-1, j) = 0;
                     }
                     else if (j == 1) {
                         A(0, j) = 1;
-                        A(numPoints-1, j) = 0;
                     }
-                    else if (j == numPoints - 2) {
-                        A(0, j) = 0;
-                        A(numPoints - 1, j) = 1;
-                    }
-                    else if (j == numPoints - 1) {
-                        A(0, j) = 0;
-                        A(numPoints - 1, j) = 2;
-                    } 
                     else {
                         A(0, j) = 0;
+                    }
+                }
+
+                // finish last row of A matrix
+                for (int j = 0; j < numPoints; j++) {
+                    if (j == numPoints - 2) {
+                    A(numPoints - 1, j) = 1;
+                    }
+                    else if (j == numPoints - 1) {
+                    A(numPoints - 1, j) = 2;
+                    }
+                    else {
                         A(numPoints - 1, j) = 0;
                     }
                 }

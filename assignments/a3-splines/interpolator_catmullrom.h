@@ -74,7 +74,6 @@ public:
                 }
                 else {
                     b2 = b3 - (getControlPoint((i + 2) * 3) - b0) / 6.0f; // getControlPoint((i + 1) * 3) gets p_i+2 after b3 = p_i+1
-                    std::cout << b2.y << std::endl;
                 }
 
                 editControlPoint(3 * i, b0); // we will re-edit already put in points, but it should be fine

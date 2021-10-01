@@ -29,17 +29,101 @@ void CurveEditor::setup() {
 }
 
 void CurveEditor::scene() {
-  drawState();
-  // todo: your code here
+    drawState();
+    // todo: your code here
+
+
+    // we have to draw it differently based on type of interpolator
+
+    // draw the keypoints first
+
+
+
+
+    // NOTE: will not be able to edit in control point mode if there are no control points but 1 key point
+    if (mShowControlPoints && mSpline.getNumControlPoints() != 0) {
+        if (mSpline.getInterpolationType() == "Catmull-Rom") {
+            for (int i = 0; i < mSpline.getNumControlPoints(); i++) {
+                if (i % 3 == 0) {
+                    setColor(vec3(0, 0, 1));
+                }
+                else {
+                    setColor(vec3(1, 1, 0));
+                }
+                vec3 controlPoint = mSpline.getControlPoint(i);
+                drawSphere(controlPoint, 15.0f);
+            }
+        }
+        else if (mSpline.getInterpolationType() == "Hermite") { // hermite
+            for (int i = 0; i < mSpline.getNumControlPoints(); i++) {
+                vec3 controlPoint = mSpline.getControlPoint(i);
+                if (i % 2 == 0) {
+                    setColor(vec3(0, 0, 1));
+                    drawSphere(controlPoint, 15.0f);
+                }
+                else {
+                    setColor(vec3(1, 1, 0));
+                    // since this is slope, we add it to its keypoint
+                    drawSphere(controlPoint + mSpline.getControlPoint(i-1), 15.0f);
+                }
+                
+            }
+        }
+    }
+    else { 
+        for (int i = 0; i < mSpline.getNumKeys(); i++) {
+            setColor(vec3(0, 0, 1));
+            vec3 keyPoint = mSpline.getKey(i);
+            drawSphere(keyPoint, 15.0f);
+        }
+    }
+
+    // draws the blue lines between key points
+    if (mSpline.getNumSegments() != 0) {
+        // I want 30 points between each segment
+        int numPoints = mSpline.getNumSegments() * 30;
+        float interval = mSpline.getDuration() / (float)numPoints;
+        std::vector<vec3> points(numPoints+1);
+        for (int n = 0; n < numPoints + 1; n++) {
+            points[n] = mSpline.getValue(interval * n);
+        }
+        setColor(vec3(0, 0, 1));
+        for (int i = 0; i < numPoints; i++) {
+            drawLine(points[i], points[i + 1]);
+        }
+    }
+
+    // draws the yellow line depending on which type of curve
+    if (mShowControlPoints && mSpline.getNumControlPoints() != 0) {
+        // if catmullrom, then we draw a yellow line from control point to control point
+        setColor(vec3(1, 1, 0));
+        if (mSpline.getInterpolationType() == "Catmull-Rom") {
+            for (int i = 0; i < mSpline.getNumControlPoints() - 1; i++) {
+                drawLine(mSpline.getControlPoint(i), mSpline.getControlPoint(i + 1));
+            }
+        }
+
+        if (mSpline.getInterpolationType() == "Hermite") {
+            for (int i = 0; i < mSpline.getNumControlPoints(); i+=2) {
+                vec3 kp = mSpline.getControlPoint(i);
+                vec3 slope = mSpline.getControlPoint(i + 1);
+                drawLine(kp, kp+slope);
+            }
+        }
+    }
+
+
 }
 
 void CurveEditor::addPoint(const vec3& p) {
   //std::cout << "Add key: " << p << std::endl;
   mSpline.appendKey(mSpline.getNumKeys(), p);
+  mSpline.computeControlPoints();
 }
 
 void CurveEditor::deletePoint(int key) {
   mSpline.deleteKey(key);
+  mSpline.computeControlPoints();
 }
 
 void CurveEditor::drawState() {
@@ -142,7 +226,7 @@ void CurveEditor::mouseDown(int pButton, int state) {
 
     } else if (mMode == REMOVE) {
       mSelected = pickPoint(pX, height() - pY);
-      deletePoint(mSelected);
+      if (mSelected != -1 && !mShowControlPoints) deletePoint(mSelected);
 
     } else if (mMode == EDIT) {
       mSelected = pickPoint(pX, height() - pY);
@@ -160,12 +244,15 @@ void CurveEditor::keyUp(int pKey, int mods) {
     }
   } else if (pKey == '1') {
     mSpline.setInterpolationType("Linear");
+    mSpline.computeControlPoints();
 
   } else if (pKey == '2') {
     mSpline.setInterpolationType("Catmull-Rom");
+    mSpline.computeControlPoints();
 
   } else if (pKey == '3') {
     mSpline.setInterpolationType("Hermite");
+    mSpline.computeControlPoints();
 
   } else if (pKey == 'A') {
     mMode = ADD;

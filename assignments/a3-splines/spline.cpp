@@ -125,6 +125,7 @@ glm::vec3 Spline::getValue(float t) const {
           if (t <= getTime(i)) { // this includes the endpoint
               segment = i - 1; // the segment will be 1 less than the endpoint that "contains" it
               // the number associated with segment also corresponds to the first point of the segment
+              break; // so we don't keep assigning segment
           }
       }
       u = (t - getTime(segment)) / (getTime(segment + 1) - getTime(segment));

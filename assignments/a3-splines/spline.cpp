@@ -118,19 +118,18 @@ glm::vec3 Spline::getValue(float t) const {
   }
   else if (t >= getDuration()) {
       u = 1;
-      segment = getDuration() - 1; // last segment
+      segment = getNumKeys() - 2; // we see that segment will always be 1 less than endpoint that contains t
   }
   else {
       for (int i = 0; i < getNumKeys(); i++) {
           if (t <= getTime(i)) { // this includes the endpoint
-              segment = i - 1; // the segment will be 1 less than the endpoint that "contains" it
+              segment = i - 1; // the segment will be 1 less than the endpoint that "contains" t
               // the number associated with segment also corresponds to the first point of the segment
               break; // so we don't keep assigning segment
           }
       }
       u = (t - getTime(segment)) / (getTime(segment + 1) - getTime(segment));
   }
-
   return mInterpolator->interpolate(segment, u);
 }
 

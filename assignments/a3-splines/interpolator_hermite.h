@@ -172,7 +172,7 @@ public:
     glm::vec3 getClampDirection() const { return mClampDir; }
 
 private:
-    bool mIsClamped = false;
+    bool mIsClamped = true;
     glm::vec3 mClampDir;
 };
 

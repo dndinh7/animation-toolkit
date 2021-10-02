@@ -27,7 +27,7 @@ https://user-images.githubusercontent.com/72237791/135702132-3f69a87c-a949-4484-
 This short video shows the creation and modification of a spline, using all three interpolators.
 
 Design Decisions:
-Whenever we exit the control point view, the control points will be recalculated. Whenever we switch to a new curve, we will recalculate the control points. Also, I had a bug with deleting the first control point. I will strive to fix it.
+Whenever we exit the control point view, the control points will be recalculated. Whenever we switch to a new curve, we will recalculate the control points. 
 
 # Task6
 ![unique](https://user-images.githubusercontent.com/72237791/135704162-3eea0d9e-4eba-416e-a776-2f3d014e8880.gif)

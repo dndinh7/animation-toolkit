@@ -2,6 +2,7 @@
 #include "spline.h"
 #include "math.h"
 #include "interpolator_linear.h"
+#include <iostream>
 
 // global interpolator to use as default
 static InterpolatorLinear gDefaultInterpolator; 
@@ -111,7 +112,7 @@ glm::vec3 Spline::getValue(float t) const {
   float u; // normalized time
   int segment; // will contain which segment of the line we're in
 
-  if (t <= 0) {
+  if (t <= getTime(0)) {
       u = 0;
       segment = 0; // first segment
   }

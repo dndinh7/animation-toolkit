@@ -240,7 +240,7 @@ void CurveEditor::mouseDown(int pButton, int state) {
       }
 
       if (add) {
-        if (!mShowControlPoints) addPoint(vec3(pX, height()-pY, 0));
+        addPoint(vec3(pX, height()-pY, 0));
       }
 
     } else if (mMode == REMOVE) {

@@ -30,5 +30,6 @@ Design Decisions:
 Whenever we exit the control point view, the control points will be recalculated. Whenever we switch to a new curve, we will recalculate the control points. Also, I had a bug with deleting the first control point. I will strive to fix it.
 
 # Task6
-WIP: I was trying to make a square have each quality follow a spline: position, color, and size. I feel like I have it done, but there is a bug where the splines I created in a class either disappear or merge into one another. This is a bug I have been trying to fix for 2 hours and have not been able to. I am very sorry, I will continue to try to fix it and will replace this part of the readme once I am done.
+![unique](https://user-images.githubusercontent.com/72237791/135704162-3eea0d9e-4eba-416e-a776-2f3d014e8880.gif)
 
+The animation is a bunch of squares moving around the screen based on Hermite curves, while changing colors based on Catmullrom curves, and changing sizes linearly. They move forward for 8 seconds, then backwards for 8 seconds in an infinite loop.

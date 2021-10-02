@@ -100,8 +100,7 @@ glm::vec3 Spline::getValue(float t) const {
   {
     mInterpolator->computeControlPoints(mKeys);
     mDirty = false;
-  }
-
+  }  
   // todo: your code here
   // compute the segment containing t
   // compute the value [0, 1] along the segment for interpolation

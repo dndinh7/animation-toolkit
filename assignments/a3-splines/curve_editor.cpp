@@ -40,8 +40,8 @@ void CurveEditor::scene() {
 
 
 
-    // NOTE: will not be able to edit in control point mode if there are no control points but 1 key point
-    if (mShowControlPoints && mSpline.getNumControlPoints() != 0) {
+    // NOTE: will not be able to edit in control point mode if there are no control points
+    if (mShowControlPoints && mSpline.getNumControlPoints() != 0 && mSpline.getInterpolationType() != "Linear") {
         if (mSpline.getInterpolationType() == "Catmull-Rom") {
             for (int i = 0; i < mSpline.getNumControlPoints(); i++) {
                 if (i % 3 == 0) {
@@ -55,22 +55,23 @@ void CurveEditor::scene() {
             }
         }
         else if (mSpline.getInterpolationType() == "Hermite") { // hermite
-            for (int i = 0; i < mSpline.getNumControlPoints(); i++) {
-                vec3 controlPoint = mSpline.getControlPoint(i);
-                if (i % 2 == 0) {
-                    setColor(vec3(0, 0, 1));
-                    drawSphere(controlPoint, 15.0f);
+            if (mShowControlPoints && mSpline.getNumControlPoints() != 0) {
+                for (int i = 0; i < mSpline.getNumControlPoints(); i++) {
+                    vec3 controlPoint = mSpline.getControlPoint(i);
+                    if (i % 2 == 0) {
+                        setColor(vec3(0, 0, 1));
+                        drawSphere(controlPoint, 15.0f);
+                    }
+                    else {
+                        setColor(vec3(1, 1, 0));
+                        // since this is slope, we add it to its keypoint
+                        drawSphere(controlPoint + mSpline.getControlPoint(i - 1), 15.0f);
+                    }
                 }
-                else {
-                    setColor(vec3(1, 1, 0));
-                    // since this is slope, we add it to its keypoint
-                    drawSphere(controlPoint + mSpline.getControlPoint(i-1), 15.0f);
-                }
-                
             }
         }
     }
-    else { 
+    else { // this will be linear interpolation
         for (int i = 0; i < mSpline.getNumKeys(); i++) {
             setColor(vec3(0, 0, 1));
             vec3 keyPoint = mSpline.getKey(i);
@@ -78,11 +79,13 @@ void CurveEditor::scene() {
         }
     }
 
+
     // draws the blue lines between key points
-    if (mSpline.getNumSegments() != 0) {
+    if (mSpline.getNumKeys() > 1) {
         // I want 30 points between each segment
-        int numPoints = mSpline.getNumSegments() * 30;
-        float interval = mSpline.getDuration() / (float)numPoints;
+        int numPoints = (mSpline.getNumKeys()) * 30;
+        float interval = (mSpline.getDuration() - mSpline.getTime(0)) / (float)numPoints;
+        
         std::vector<vec3> points(numPoints+1);
         for (int n = 0; n < numPoints + 1; n++) {
             points[n] = mSpline.getValue(interval * n);
@@ -115,14 +118,20 @@ void CurveEditor::scene() {
 
 }
 
+int timeCount = 0; // this will be a new count for the time parameter of adding a key
+// there was a bug where if you deleted multiple things, then added more points, then there would be duplicate times for points
+// so I will always have distinct times for each point
+
 void CurveEditor::addPoint(const vec3& p) {
   //std::cout << "Add key: " << p << std::endl;
-  mSpline.appendKey(mSpline.getNumKeys(), p);
+  mSpline.appendKey(timeCount, p);
+  timeCount++;
   mSpline.computeControlPoints();
 }
 
 void CurveEditor::deletePoint(int key) {
   mSpline.deleteKey(key);
+  std::cout << key << std::endl;
   mSpline.computeControlPoints();
 }
 
@@ -134,7 +143,18 @@ void CurveEditor::drawState() {
     case REMOVE: drawText("Mode: DELETE", 5, th); break;
   }
   th += renderer.textHeight() + 5; 
-  drawText("Type: "+mSpline.getInterpolationType(), 5, th); 
+  drawText("Type: "+mSpline.getInterpolationType() + 
+      ((mSpline.getInterpolationType()=="Hermite") ? ((mHermite.isClamped()) ? " (clamped)" : " (natural)") : ""), 5, th);
+  
+  th += renderer.textHeight() + 5;
+  
+  if (mShowControlPoints) {
+      drawText("View: Control Points", 5, th);
+  }
+  else {
+      drawText("View: Key Points", 5, th);
+  }
+   
 }
 
 void CurveEditor::listControls() {
@@ -159,12 +179,12 @@ void CurveEditor::mouseMotion(int pX, int pY, int dx, int dy) {
     vec3 p = vec3(pX, height() - pY, 0);
     if (mShowControlPoints) {
       if (mSpline.getInterpolationType() == "Hermite" && mSelected % 2 == 1) {
-        mSpline.editControlPoint(mSelected, p-mSpline.getControlPoint(mSelected-1));
+        mSpline.editControlPoint(mSelected, p - mSpline.getControlPoint(mSelected - 1));
       } else {
-        mSpline.editControlPoint(mSelected, p);
+        mSpline.editControlPoint(mSelected, p); // catmullRom
       }
     }
-    else mSpline.editKey(mSelected, p);
+    else mSpline.editKey(mSelected, p); // I will edit every keypoint regardless
   }
 }
 
@@ -221,7 +241,7 @@ void CurveEditor::mouseDown(int pButton, int state) {
       }
 
       if (add) {
-        addPoint(vec3(pX, height()-pY, 0));
+        if (!mShowControlPoints) addPoint(vec3(pX, height()-pY, 0));
       }
 
     } else if (mMode == REMOVE) {
@@ -263,16 +283,30 @@ void CurveEditor::keyUp(int pKey, int mods) {
   } else if (pKey == 'E') {
     mMode = EDIT;
 
-  } else if (pKey == 'C') {
+  } else if (pKey == 'C') { // pressing 'C' will recompute the control points, so the edits we've made to the controls points disappear
+      if (mShowControlPoints) {
+          if (mSpline.getInterpolationType() == "Catmull-Rom") {
+              for (int i = 0; i < mSpline.getNumControlPoints(); i+=3) {
+                  mSpline.editKey(i / 3, mSpline.getControlPoint(i));
+              }
+          }
+          else if (mSpline.getInterpolationType() == "Hermite") {
+              for (int i = 0; i < mSpline.getNumControlPoints(); i += 2) {
+                  mSpline.editKey(i / 2, mSpline.getControlPoint(i));
+              }
+          }
+      }
     mShowControlPoints = !mShowControlPoints;
 
   } else if (pKey == GLFW_KEY_SPACE) {
     mSpline.clear();
+    timeCount = 0;
 
   } else if (pKey == 'H') {
     mHermite.setClamped(!mHermite.isClamped());
     mSpline.computeControlPoints();
   } 
+
 }
 
 int main(int argc, char** argv)

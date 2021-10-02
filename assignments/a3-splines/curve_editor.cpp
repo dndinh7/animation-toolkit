@@ -83,12 +83,13 @@ void CurveEditor::scene() {
     // draws the blue lines between key points
     if (mSpline.getNumKeys() > 1) {
         // I want 30 points between each segment
-        int numPoints = (mSpline.getNumKeys()) * 30;
+        int numPoints = (mSpline.getNumSegments()) * 30;
         float interval = (mSpline.getDuration() - mSpline.getTime(0)) / (float)numPoints;
-        
         std::vector<vec3> points(numPoints+1);
         for (int n = 0; n < numPoints + 1; n++) {
-            points[n] = mSpline.getValue(interval * n);
+            points[n] = mSpline.getValue(interval * n + mSpline.getTime(0));
+
+
         }
         setColor(vec3(0, 0, 1));
         for (int i = 0; i < numPoints; i++) {

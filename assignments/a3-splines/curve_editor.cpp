@@ -131,6 +131,7 @@ void CurveEditor::addPoint(const vec3& p) {
 }
 
 void CurveEditor::deletePoint(int key) {
+  if (mShowControlPoints) return;
   mSpline.deleteKey(key);
   mSpline.computeControlPoints();
 }

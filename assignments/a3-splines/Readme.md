@@ -1,7 +1,5 @@
 # Readme
 
-# Readme
-
 # Task1
 ![linear](https://user-images.githubusercontent.com/72237791/135702004-833f7023-7bd9-41da-9278-c81ddb38e9ad.png)
 

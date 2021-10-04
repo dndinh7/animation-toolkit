@@ -35,11 +35,11 @@ Vector3 Matrix3::toEulerAnglesXYZ() const
 	float x;
 	float y = asin(mM[0][2]);
 	float z;
-	if (mM[0][2] == 1) { // this means Y has a rotation of 90 or -90
+	if (mM[0][2] == 1) { // this means Y has a rotation of 90
 		z = 0;
 		x = atan2(mM[1][0], mM[1][1]);
 	}
-	else if (mM[0][2] == -1) {
+	else if (mM[0][2] == -1) { // Y has a rotation of -90
 		z = 0;
 		x = atan2(mM[2][1], mM[2][0]);
 	}

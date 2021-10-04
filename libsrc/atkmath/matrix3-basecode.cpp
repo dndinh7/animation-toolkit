@@ -32,33 +32,112 @@ Matrix3 zMatrix(const Vector3& angleRad) {
 
 Vector3 Matrix3::toEulerAnglesXYZ() const
 {
-   return Vector3();
+	float x;
+	float y = asin(mM[0][2]);
+	float z;
+	if (mM[0][2] == 1) { // this means Y has a rotation of 90
+		
+	}
+	else if (mM[0][2] == -1) { // this means Y has a rotation of -90
+
+	}
+	else {
+		z = atan2(-mM[0][1], mM[0][0]);
+		x = atan2(-mM[1][2], mM[2][2]);
+	}
+   return Vector3(x, y, z);
 }
 
 Vector3 Matrix3::toEulerAnglesXZY() const
 {
-   return Vector3();
+	float x;
+	float y;
+	float z = asin(-mM[0][1]);
+	if (mM[0][1] == 1) { // this means Z has a rotation of -90
+
+	}
+	else if (mM[0][1] == -1) { // this means Z has a rotation of 90
+
+	}
+	else {
+		y = atan2(mM[0][2], mM[0][0]);
+		x = atan2(mM[2][1], mM[1][1]);
+	}
+   return Vector3(x, y, z);
 }
 
 Vector3 Matrix3::toEulerAnglesYXZ() const
 {
-   return Vector3();
+	float x = asin(-mM[1][2]);
+	float y;
+	float z;
+		if (mM[0][1] == 1) { // this means Z has a rotation of -90
+
+		}
+		else if (mM[0][1] == -1) { // this means Z has a rotation of 90
+
+		}
+		else {
+			z = atan2(mM[1][0], mM[1][1]);
+			y = atan2(mM[0][2], mM[2][2]);
+		}
+	return Vector3(x, y, z);
 }
 
 Vector3 Matrix3::toEulerAnglesYZX() const
 {
-   return Vector3();
+	float x;
+	float y;
+	float z = asin(mM[1][0]);
+	if (mM[0][1] == 1) { // this means Z has a rotation of -90
+
+	}
+	else if (mM[0][1] == -1) { // this means Z has a rotation of 90
+
+	}
+	else {
+		y = atan2(-mM[2][0], mM[0][0]);
+		x = atan2(-mM[1][2], mM[1][1]);
+	}
+	return Vector3(x, y, z);
 }
 
 Vector3 Matrix3::toEulerAnglesZXY() const
 {
-   return Vector3();
+	float x = asin(mM[2][1]);
+	float y;
+	float z;
+	if (mM[0][1] == 1) { // this means Z has a rotation of -90
+
+	}
+	else if (mM[0][1] == -1) { // this means Z has a rotation of 90
+
+	}
+	else {
+		z = atan2(-mM[0][1], mM[1][1]);
+		y = atan2(-mM[2][0], mM[2][2]);
+	}
+	return Vector3(x, y, z);
 }
 
 Vector3 Matrix3::toEulerAnglesZYX() const
 {
-
-   return Vector3();
+	float x;
+	float y = asin(-mM[2][0]);
+	float z;
+	// indicates that the matrix has a Y rotation of -90
+	if (mM[2][0] == 1) {
+		z = 0; // set z to an arbitrary value, use 0 for ease
+		x = atan2(-mM[0][1], -mM[0][2]); // if the matrix has a negative plug them in?
+	} else if (mM[2][0] == -1) { // indicates that the matrix has a Y rotation of 90
+		z = 0;
+		x = atan2(mM[0][1], mM[0][2]);
+	}
+	else {
+		z = atan2(mM[1][0], mM[0][0]);
+		x = atan2(mM[2][1], mM[2][2]);
+	}
+   return Vector3(x, y, z);
 }
 
 void Matrix3::fromEulerAnglesXYZ(const Vector3& angleRad)

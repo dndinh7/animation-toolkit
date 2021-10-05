@@ -108,8 +108,8 @@ public:
 	}
 
 	vec3 centerPos;
-	vec3 initialPos;
-	vec3 sizeCenterCube = vec3(22.5f); // change these two 
+	vec3 initialPos; // so we can interpolate from this to the branch
+	vec3 sizeCenterCube = vec3(22.5f); // change this to change size of shurikens
 	float sizeCenterCirc;
 	Vector3 angCenter= Vector3(0, 0, 0);
 	vec3 posTri[4];
@@ -183,7 +183,7 @@ public:
 		}
 
 		// there should always be at least one alive branch and shuriken, due to their construction
-		if (branches[0].shouldDelete()) {
+		if (branches.size() != 0 && branches[0].shouldDelete()) {
 			branches.pop_front();
 			shurikens.pop_front();
 		}

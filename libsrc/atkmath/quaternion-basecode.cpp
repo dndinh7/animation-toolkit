@@ -2,6 +2,11 @@
 #include "atkmath/matrix3.h"
 #include "atkmath/vector3.h"
 #include <iostream>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
 
 namespace atkmath {
 
@@ -14,11 +19,18 @@ Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, double 
 void Quaternion::toAxisAngle(Vector3& axis, double& angleRad) const
 {
 	// TODO
-	angleRad = acos(mW)*2;
 
-	axis = Vector3(mX / sin(angleRad * 0.5), mY / sin(angleRad * 0.5), mZ / sin(angleRad * 0.5));
-
-
+	
+	angleRad = 2 * acos(mW);
+	float mag_v = sqrt(mX*mX + mY*mY + mZ*mZ);
+	// this condition equates to no rotation or an identity
+	if (mag_v == 0) {
+		axis = Vector3(0, 0, 0);
+	}
+	else {
+		axis = Vector3(mX / mag_v, mY / mag_v, mZ / mag_v);
+	}
+	
 }
 
 void Quaternion::fromAxisAngle (const Vector3& axis, double angleRad)
@@ -69,21 +81,21 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 	if (biggest == vx_2) {
 		vx = sqrt(vx_2);
 		w = (rot.m32 - rot.m23) / (4 * vx);
-		vy = (rot.m21 - rot.m12) / (4 * vx);
+		vy = (rot.m12 + rot.m21) / (4 * vx);
 		vz = (rot.m13 + rot.m31) / (4 * vx);
 
 	}
 	else if (biggest == vy_2) {
 		vy = sqrt(vy_2);
 		w = (rot.m13 - rot.m31) / (4 * vy);
-		vx = (rot.m21 - rot.m12) / (4 * vy);
+		vx = (rot.m12 + rot.m21) / (4 * vy);
 		vz = (rot.m23 + rot.m32) / (4 * vy);
 	}
 	else if (biggest == vz_2) {
 		vz = sqrt(vz_2);
 		vy = (rot.m23 + rot.m32) / (4 * vz);
 		w = (rot.m21 - rot.m12) / (4 * vz);
-		vx = (rot.m13 - rot.m31) / (4 * vz);
+		vx = (rot.m13 + rot.m31) / (4 * vz);
 	}
 	else { // this is the case where w_2 is the largest
 		w = sqrt(w_2);

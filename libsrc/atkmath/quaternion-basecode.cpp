@@ -20,15 +20,15 @@ void Quaternion::toAxisAngle(Vector3& axis, double& angleRad) const
 {
 	// TODO
 
-	
 	angleRad = 2 * acos(mW);
 	float mag_v = sqrt(mX*mX + mY*mY + mZ*mZ);
 	// this condition equates to no rotation or an identity
 	if (mag_v == 0) {
-		axis = Vector3(0, 0, 0);
+		axis = Vector3(1, 0, 0);
 	}
 	else {
 		axis = Vector3(mX / mag_v, mY / mag_v, mZ / mag_v);
+		axis.normalize();
 	}
 	
 }

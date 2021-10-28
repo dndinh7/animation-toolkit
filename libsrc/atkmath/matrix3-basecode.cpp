@@ -7,7 +7,7 @@
 namespace atkmath {
 
 Matrix3 xMatrix(const Vector3& angleRad) {
-	float x = angleRad.mX;
+	float x = angleRad.x();
 	Matrix3 Rx(
 		1, 0     ,  0,
 		0, cos(x), -sin(x),
@@ -16,7 +16,7 @@ Matrix3 xMatrix(const Vector3& angleRad) {
 }
 
 Matrix3 yMatrix(const Vector3& angleRad) {
-	float y = angleRad.mY;
+	float y = angleRad.y();
 	Matrix3 Ry(
 		cos(y), 0, sin(y),
 		0, 1, 0,
@@ -25,7 +25,7 @@ Matrix3 yMatrix(const Vector3& angleRad) {
 }
 
 Matrix3 zMatrix(const Vector3& angleRad) {
-	float z = angleRad.mZ;
+	float z = angleRad.z();
 	Matrix3 Rz(
 		cos(z), -sin(z), 0,
 		sin(z), cos(z) , 0,

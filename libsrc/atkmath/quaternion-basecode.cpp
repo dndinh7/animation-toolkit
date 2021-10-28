@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
+
 using namespace std;
 
 
@@ -13,7 +14,37 @@ namespace atkmath {
 Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, double t)
 {
 	// TODO
-	return Quaternion(1,0,0,0);
+	double prod1 = Quaternion::Dot(q0, q1);
+	double angleRad;
+
+	// angle distance is big, so use q2
+	if (prod1 < 0) {
+		Quaternion q2 = -q1;
+
+		prod1 = Quaternion::Dot(q0, q2);
+
+		// clamp
+		if (prod1 > 1) {
+			prod1 = 1;
+		}
+
+		angleRad = acos(prod1);
+
+		if (angleRad == 0.0) return q0;
+
+		return sin(angleRad * (1 - t)) * q0 / sin(angleRad) + sin(angleRad * t) * q2 / sin(angleRad);
+	}
+
+	// clamp
+	if (prod1 > 1) {
+		prod1 = 1;
+	}
+
+	angleRad = acos(prod1);
+
+	if (angleRad == 0.0) return q0;
+
+	return sin(angleRad * (1 - t)) * q0 / sin(angleRad) + sin(angleRad * t) * q1 / sin(angleRad);
 }
 
 void Quaternion::toAxisAngle(Vector3& axis, double& angleRad) const

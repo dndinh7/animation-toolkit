@@ -50,10 +50,7 @@ public:
 
       // Question 4
       // Compute a series of transforms that stack Box 2 onto Box 1
-      Transform F00(R10, d10-d20); // to be in global position of Box 1, R10 is no rotation 
-      Transform F22(glm::angleAxis(-glm::pi<float>() / 4, vec3(0, 0, 1)), vec3(0)); // rotate Box 2 back to starting position
-      Transform F11(R10, vec3(0, 2, 0)); // in frame 1, we move up two units, R10 is no rotation
-      Transform F= F10 * F11 * F10.inverse() * F00 * F20 * F22;
+      Transform F = F10 * Transform(R10, vec3(0, 2, 0)) * F20.inverse() * F20; // R10 is the identity matrix
       setColor(vec3(0.5, 0.5, 0.5));
       drawBox(F); // convert from frame 2 into frame 1, and displace box by height of box
 

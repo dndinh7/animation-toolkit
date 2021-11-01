@@ -96,10 +96,10 @@ Matrix3 Quaternion::toMatrix () const
 void Quaternion::fromMatrix(const Matrix3& rot)
 {
 	// TODO
-	float vx_2 = 0.25 * (rot.m11 - rot.m22 - rot.m33 + 1);
-	float vy_2 = 0.25 * (-rot.m11 + rot.m22 - rot.m33 + 1);
-	float vz_2 = 0.25 * (-rot.m11 - rot.m22 + rot.m33 + 1);
-	float w_2 = 0.25 * (rot.m11 + rot.m22 + rot.m33 + 1);
+	float vx_2 = 0.25 * (rot[0][0] - rot[1][1] - rot[2][2] + 1);
+	float vy_2 = 0.25 * (-rot[0][0] + rot[1][1] - rot[2][2] + 1);
+	float vz_2 = 0.25 * (-rot[0][0] - rot[1][1] + rot[2][2] + 1);
+	float w_2 = 0.25 * (rot[0][0] + rot[1][1] + rot[2][2] + 1);
 
 	// choose the biggest of the squared terms
 	float biggest = std::max(std::max(std::max(vx_2, vy_2), vz_2), w_2);
@@ -111,28 +111,28 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 
 	if (biggest == vx_2) {
 		vx = sqrt(vx_2);
-		w = (rot.m32 - rot.m23) / (4 * vx);
-		vy = (rot.m12 + rot.m21) / (4 * vx);
-		vz = (rot.m13 + rot.m31) / (4 * vx);
+		w = (rot[2][1] - rot[1][2]) / (4 * vx);
+		vy = (rot[0][1] + rot[1][0]) / (4 * vx);
+		vz = (rot[0][2] + rot[2][0]) / (4 * vx);
 
 	}
 	else if (biggest == vy_2) {
 		vy = sqrt(vy_2);
-		w = (rot.m13 - rot.m31) / (4 * vy);
-		vx = (rot.m12 + rot.m21) / (4 * vy);
-		vz = (rot.m23 + rot.m32) / (4 * vy);
+		w = (rot[0][2] - rot[2][0]) / (4 * vy);
+		vx = (rot[0][1] + rot[1][0]) / (4 * vy);
+		vz = (rot[1][2] + rot[2][1]) / (4 * vy);
 	}
 	else if (biggest == vz_2) {
 		vz = sqrt(vz_2);
-		vy = (rot.m23 + rot.m32) / (4 * vz);
-		w = (rot.m21 - rot.m12) / (4 * vz);
-		vx = (rot.m13 + rot.m31) / (4 * vz);
+		vy = (rot[1][2] + rot[2][1]) / (4 * vz);
+		w = (rot[1][0] - rot[0][1]) / (4 * vz);
+		vx = (rot[0][2] + rot[2][0]) / (4 * vz);
 	}
 	else { // this is the case where w_2 is the largest
 		w = sqrt(w_2);
-		vz = (rot.m21 - rot.m12) / (4 * w);
-		vy = (rot.m13 - rot.m31) / (4 * w);
-		vx = (rot.m32 - rot.m23) / (4 * w);
+		vz = (rot[1][0] - rot[0][1]) / (4 * w);
+		vy = (rot[0][2] - rot[2][0]) / (4 * w);
+		vx = (rot[2][1] - rot[1][2]) / (4 * w);
 	}
 
 	mX = vx;

@@ -19,19 +19,26 @@ public:
    }
 
    void scene() {
-       if (time > motion.getDuration()) {
-           time = 0;
-      }
-      motion.update(skeleton, time);
-      if (time == motion.getDuration()) { //unless we actually land on the last frame, we will not have a current last frame
+
+       if (!paused) {
+           if (cmpFloats(time, motion.getDuration())) { // once we get to the end of the motion, we immediately loop back
+               time = 0;
+           } else if (time > motion.getDuration()) { // we stay at the last frame for one second regardless
+               time = motion.getDuration();
+           }
+           else {
+               time += dt() * timeScale;
+           }
+       }
+
+       motion.update(skeleton, time);
+
+
+      if (cmpFloats(time, motion.getDuration())) {
           currentFrame = motion.getNumKeys()-1;
       }
       else {
           currentFrame = motion.getKeyID(time);
-      }
-
-      if (!paused) {
-          time += dt() * timeScale;
       }
 
       setColor(vec3(0,0,0.8));
@@ -59,17 +66,27 @@ public:
            break;
        case GLFW_KEY_PERIOD:
            if (paused) {
-               time += motion.getDeltaTime();
-               if (time > motion.getDuration()) {
+               if (!(currentFrame == motion.getNumKeys()-1)) {
+                   time += motion.getDeltaTime();
+               }
+               else if (currentFrame == motion.getNumKeys()-1) {
                    time = 0;
+               }
+               if (time > motion.getDuration()) {
+                   time = motion.getDuration();
                }
            }
            break;
        case GLFW_KEY_COMMA:
            if (paused) {
-               time -= motion.getDeltaTime();
-               if (time < 0) {
+               if (!(currentFrame == 0)) {
+                   time -= motion.getDeltaTime();
+               }
+               else if (currentFrame == 0) {
                    time = motion.getDuration();
+               }
+               if (time < 0) {
+                   time = 0;
                }
            }
            break;
@@ -84,6 +101,11 @@ public:
            }
            break;
        }
+   }
+
+   // will have an epsilon of .0005f
+   bool cmpFloats(float a, float b) {
+       return fabs(a - b) < .0005f;
    }
 
 private:
@@ -104,7 +126,7 @@ int main(int argc, char** argv) {
         file = argv[1];
     }
     else {
-        file = "../motions/Beta/idle.bvh";
+        file = "../motions/Beta/jump.bvh";
     }
 
     MotionViewer viewer(file);

@@ -24,8 +24,9 @@ public:
       float size;
 
       for (int i = 0; i < 12; i++) {
-          position = vec3(agl::random(-200, 200), 0, agl::random(-300, 300));
-          color = vec3(0.80f + agl::random(-0.20f, 0.20f), 0.20f + agl::random(-0.20f, 0.20f), 0.20f + agl::random(-0.20f, 0.20f));
+          // 4x3 grid where the cells are size 100 and randomized
+          position = vec3(agl::random(-200, 200), 0, agl::random(-150,150));
+          color = vec3(0.80f + agl::random(0, 0.20f), 0.20f + agl::random(-0.20f, 0.10f), 0.20f + agl::random(-0.20f, 0.10f));
           size = agl::random(0.35f, 0.75f);
 
           devils.push_back(Devil(position, color, size));

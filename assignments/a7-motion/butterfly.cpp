@@ -31,14 +31,14 @@ public:
    void scene() {
        theta += dt();
       Joint* body = skeleton.getByName("Body");
-      body->setLocalTranslation(vec3(100 * sin(elapsedTime()), 100+75*sin(elapsedTime()), 100 * cos(elapsedTime())));
+      body->setLocalTranslation(vec3(100 * sin(1.5f*elapsedTime()), 100+75*sin(1.5f*elapsedTime()), 100 * cos(1.5f*elapsedTime())));
       body->setLocalRotation(glm::angleAxis(theta, vec3(0, 1, 0)));
 
       Joint* lwing = skeleton.getByName("LWing");
-      lwing->setLocalRotation(glm::angleAxis(sin(elapsedTime()), vec3(0,0,1)));
+      lwing->setLocalRotation(glm::angleAxis(sin(1.5f*elapsedTime()), vec3(0,0,1)));
 
       Joint* rwing = skeleton.getByName("RWing");
-      rwing->setLocalRotation(glm::angleAxis(-sin(elapsedTime()), vec3(0,0,1))); 
+      rwing->setLocalRotation(glm::angleAxis(-sin(1.5f*elapsedTime()), vec3(0,0,1))); 
 
 
       skeleton.fk();
@@ -68,8 +68,8 @@ public:
 
       Transform lwingGeometry1(
           glm::angleAxis(glm::pi<float>() * 0.25f, vec3(0, 1, 0)),
-         vec3(-100,0,-50), 
-         vec3(120,20,200));
+         vec3(-80,0,-50), 
+         vec3(100,20,150));
 
       Transform lwingGeometry2(
           glm::angleAxis(glm::pi<float>() * -0.25f, vec3(0, 1, 0)),
@@ -83,8 +83,8 @@ public:
 
       Transform rwingGeometry2(
           glm::angleAxis(glm::pi<float>() * -0.25f, vec3(0, 1, 0)),
-          vec3(100, 0, -50),
-          vec3(120, 20, 200));
+          vec3(80, 0, -50),
+          vec3(100, 20, 150));
 
       setColor(vec3(0.4, 0.4, 0.8));
       push();

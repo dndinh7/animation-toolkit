@@ -31,14 +31,14 @@ public:
    void scene() {
        theta += dt();
       Joint* body = skeleton.getByName("Body");
-      body->setLocalTranslation(vec3(100 * sin(1.5f*elapsedTime()), 100+75*sin(1.5f*elapsedTime()), 100 * cos(1.5f*elapsedTime())));
+      body->setLocalTranslation(vec3(100 * sin(3.0f*elapsedTime()), 100+75*sin(3.0f*elapsedTime()), 100 * cos(3.0f*elapsedTime())));
       body->setLocalRotation(glm::angleAxis(theta, vec3(0, 1, 0)));
 
       Joint* lwing = skeleton.getByName("LWing");
-      lwing->setLocalRotation(glm::angleAxis(sin(1.5f*elapsedTime()), vec3(0,0,1)));
+      lwing->setLocalRotation(glm::angleAxis(-glm::pi<float>() / 6 + 0.40f*sin(3.0f*elapsedTime()), vec3(0,0,1)));
 
       Joint* rwing = skeleton.getByName("RWing");
-      rwing->setLocalRotation(glm::angleAxis(-sin(1.5f*elapsedTime()), vec3(0,0,1))); 
+      rwing->setLocalRotation(glm::angleAxis(glm::pi<float>() / 6 + 0.40f*-sin(3.0f*elapsedTime()), vec3(0,0,1)));
 
 
       skeleton.fk();

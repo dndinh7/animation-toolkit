@@ -8,18 +8,33 @@ using namespace atk;
 class MotionViewer : public atkui::Framework
 {
 public:
-   MotionViewer() : atkui::Framework(atkui::Perspective) {
+   MotionViewer(std::string file) : atkui::Framework(atkui::Perspective), file(file) {
    }
 
    void setup() {
       BVHReader reader;
-      reader.load("../motions/Beta/jump.bvh", skeleton, motion);
+      reader.load(file, skeleton, motion);
       motion.update(skeleton, 0);
+
+      std::cout << motion.getDeltaTime() << std::endl;
+      
    }
 
    void scene() {
-      time += dt();
+       if (time > motion.getDuration()) {
+           time = 0;
+      }
       motion.update(skeleton, time);
+      if (time == motion.getDuration()) { //unless we actually land on the last frame, we will not have a current last frame
+          currentFrame = motion.getNumKeys()-1;
+      }
+      else {
+          currentFrame = motion.getKeyID(time);
+      }
+
+      if (!paused) {
+          time += dt() * timeScale;
+      }
 
       setColor(vec3(0,0,0.8));
       for (int i = 0; i < skeleton.getNumJoints(); i++) {
@@ -37,9 +52,44 @@ public:
    }
 
    virtual void keyUp(int key, int mods) {
+       switch (key) {
+       case GLFW_KEY_P:
+           paused = !paused;
+           break;
+       case GLFW_KEY_0:
+           time = 0;
+           break;
+       case GLFW_KEY_PERIOD:
+           if (paused) {
+               time += motion.getDeltaTime();
+               if (time > motion.getDuration()) {
+                   time = 0;
+               }
+           }
+           break;
+       case GLFW_KEY_COMMA:
+           if (paused) {
+               time -= motion.getDeltaTime();
+               if (time < 0) {
+                   time = motion.getDuration();
+               }
+           }
+           break;
+       case GLFW_KEY_RIGHT_BRACKET:
+           if (timeScale < 2.0f) {
+               timeScale += 0.10f;
+           }
+           break;
+       case GLFW_KEY_LEFT_BRACKET:
+           if (timeScale > 0.10f) {
+               timeScale -= 0.10f;
+           }
+           break;
+       }
    }
 
 private:
+   std::string file;
    Skeleton skeleton;
    Motion motion;
 
@@ -51,6 +101,15 @@ private:
 
 
 int main(int argc, char** argv) {
-   MotionViewer viewer;
+    std::string file;
+    if (argc == 2) { // we only have one file argument
+        file = argv[1];
+    }
+    else {
+        file = "../motions/Beta/idle.bvh";
+    }
+
+    MotionViewer viewer(file);
+
    viewer.run();
 }

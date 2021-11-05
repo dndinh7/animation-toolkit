@@ -46,9 +46,9 @@ public:
 
       // local axes
       vec3 origin= vec3(0);
-      vec3 xAxis = vec3(100, 0, 0);
-      vec3 yAxis = vec3(0, 100, 0);
-      vec3 zAxis = vec3(0, 0, 100);
+      vec3 xAxis = vec3(250, 0, 0);
+      vec3 yAxis = vec3(0, 250, 0);
+      vec3 zAxis = vec3(0, 0, 250);
 
 
       // attach geometry to skeleton 

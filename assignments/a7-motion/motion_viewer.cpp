@@ -15,8 +15,6 @@ public:
       BVHReader reader;
       reader.load(file, skeleton, motion);
       motion.update(skeleton, 0);
-
-      std::cout << motion.getDeltaTime() << std::endl;
       
    }
 

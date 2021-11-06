@@ -18,19 +18,40 @@ public:
       BVHReader reader;
       reader.load("../motions/Warrok/WarrokThriller.bvh", _skeleton, _motion);
 
-      vec3 position;
+      vec3 position= vec3(-300, 0, -100);
+      vec3 jitteredPosition;
 
       vec3 color;
       float size;
 
-      for (int i = 0; i < 12; i++) {
-          // 4x3 grid where the cells are size 100 and randomized
-          position = vec3(agl::random(-200, 200), 0, agl::random(-150,150));
-          color = vec3(0.80f + agl::random(0, 0.20f), 0.20f + agl::random(-0.20f, 0.10f), 0.20f + agl::random(-0.20f, 0.10f));
+      for (int i = 0; i < 4; i++) {
+          color = vec3(0.80f + agl::random(-0.20f, 0.20f), 0.20f + agl::random(-0.20f, 0.10f), 0.20f + agl::random(-0.20f, 0.10f));
           size = agl::random(0.35f, 0.75f);
-
-          devils.push_back(Devil(position, color, size));
+          jitteredPosition = position + vec3(150 * i + agl::random(-35.0f, 35.0f), 0, agl::random(-20.0f, 20.0f));
+          
+          devils.push_back(Devil(jitteredPosition, color, size));
       }
+
+      position = vec3(-300, 0, 0);
+
+      for (int i = 0; i < 4; i++) {
+          color = vec3(0.80f + agl::random(-0.20f, 0.20f), 0.20f + agl::random(-0.20f, 0.10f), 0.20f + agl::random(-0.20f, 0.10f));
+          size = agl::random(0.35f, 0.75f);
+          jitteredPosition = position + vec3(150 * i + agl::random(-35.0f, 35.0f), 0, agl::random(-20.0f, 20.0f));
+
+          devils.push_back(Devil(jitteredPosition, color, size));
+      }
+
+      position = vec3(-300, 0, 100);
+
+      for (int i = 0; i < 4; i++) {
+          color = vec3(0.80f + agl::random(-0.20f, 0.20f), 0.20f + agl::random(-0.20f, 0.10f), 0.20f + agl::random(-0.20f, 0.10f));
+          size = agl::random(0.35f, 0.75f);
+          jitteredPosition = position + vec3(150 * i + agl::random(-35.0f, 35.0f), 0, agl::random(-20.0f, 20.0f));
+
+          devils.push_back(Devil(jitteredPosition, color, size));
+      }
+
    }
 
    virtual void scene() {

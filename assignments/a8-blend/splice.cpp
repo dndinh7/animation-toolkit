@@ -1,6 +1,7 @@
 #include "atk/toolkit.h"
 #include "atkui/framework.h"
 #include "atkui/skeleton_drawer.h"
+#include <deque>
 #include <algorithm>
 #include <string>
 
@@ -21,6 +22,7 @@ public:
       BVHReader reader;
       reader.load("../motions/Beta/walking.bvh", _skeleton, _lower);
       reader.load("../motions/Beta/gangnam_style.bvh", _skeleton, _upper);
+
       _splice = spliceUpperBody(_lower, _upper, _alpha);
    }
 
@@ -28,8 +30,33 @@ public:
    {
       Motion result;
       result.setFramerate(lower.getFramerate());
+
+      Joint* cur_joint = _skeleton.getByName("Beta:Spine1");
+      std::deque<int> unvisited;
+      unvisited.push_back(cur_joint->getID());
+      std::vector<int> ID;
+      while(!unvisited.empty()) { // BFS to get IDs of the upperbody, tree traversal
+          cur_joint = _skeleton.getByID(unvisited.front());
+          unvisited.pop_front();
+          ID.push_back(cur_joint->getID());
+          for (int i = 0; i < cur_joint->getNumChildren(); i++) {
+              unvisited.push_back(cur_joint->getChildAt(i)->getID());
+          }
+      }
+
+      Pose lowerPose;
+      Pose upperPose;
+
       // todo: your code here
-      result.appendKey(lower.getKey(0));
+      for (int i = 0; i < lower.getNumKeys(); i++) {
+          lowerPose = lower.getKey(i);
+          upperPose = upper.getKey(i + 120);
+
+          for (int j = 0; j < ID.size(); j++) { // if part of the upperbody slerp
+              lowerPose.jointRots[ID[j]] = glm::slerp(upperPose.jointRots[ID[j]], lowerPose.jointRots[ID[j]], alpha);
+          }
+          result.appendKey(lowerPose);
+      }
       return result;
    }
 

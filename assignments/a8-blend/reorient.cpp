@@ -20,6 +20,7 @@ public:
       BVHReader reader;
       reader.load("../motions/Beta/walking.bvh", _skeleton, _motion);
 
+
       _heading = 0;
       _offset = vec3(0);
       _offset[1] = _motion.getKey(0).rootPos[1];
@@ -33,10 +34,23 @@ public:
       Motion result;
       result.setFramerate(motion.getFramerate());
 
+      Pose first = motion.getKey(0);
+      Transform to_origin(glm::angleAxis(0.f, vec3(1, 0, 0)), -first.rootPos);
+      Transform desired(angleAxis(heading, vec3(0, 1, 0)), pos);
+
       // todo: your code here
-      Pose pose = motion.getKey(0);
-      result.appendKey(pose);
-      
+      for (int i = 0; i < motion.getNumKeys(); i++) {
+          Pose rest = motion.getKey(i);
+          Transform orig(rest.jointRots[0], rest.rootPos);
+
+          Transform newState = desired * to_origin * orig;
+
+          rest.rootPos = newState.t();
+          rest.jointRots[0] = newState.r();
+
+          result.appendKey(rest);
+      }
+
       return result;
    }
 
@@ -57,13 +71,13 @@ public:
    {
       if (key == GLFW_KEY_LEFT)
       {
-         _heading += M_PI/8;
+         _heading += pi<float>()/8;
          _reoriented = reorient(_motion, _offset, _heading);
          _time = 0;
       }
       else if (key == GLFW_KEY_RIGHT)
       {
-         _heading -= M_PI/8;
+         _heading -= pi<float>()/8;
          _reoriented = reorient(_motion, _offset, _heading);
          _time = 0;
       }

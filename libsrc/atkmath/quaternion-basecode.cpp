@@ -133,6 +133,7 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 		vz = (rot[1][0] - rot[0][1]) / (4 * w);
 		vy = (rot[0][2] - rot[2][0]) / (4 * w);
 		vx = (rot[2][1] - rot[1][2]) / (4 * w);
+		std::cout << vx << " " << vy << " " << vz << std::endl;
 	}
 
 	mX = vx;

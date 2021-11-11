@@ -279,6 +279,7 @@ void TestEulerToMatrix_YZX()
     Vector3 eulerM90 = RM90.toEulerAnglesYZX();
     R.fromEulerAnglesYZX(eulerM90);
     EXPECT_EQ(R, RM90);
+
 }
 void TestEulerToMatrix_ZXY()
 {

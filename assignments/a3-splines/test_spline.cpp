@@ -104,5 +104,8 @@ int main() {
    std::cout << "Number of control points: " << spline.getNumControlPoints() << std::endl;
    std::cout << "Duration: " << duration << std::endl;
    std::cout << "getValue(1.5): " << to_string(test) << std::endl;
+
+   test = spline.getValue(2000);
+   std::cout << "getValue(2000): " << to_string(test) << std::endl;
 }
 

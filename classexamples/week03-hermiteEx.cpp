@@ -3,6 +3,7 @@
 #include "agl/aglm.h"
 
 using glm::vec2;
+using glm::vec3;
 
 int main()
 {
@@ -35,11 +36,73 @@ int main()
     p(3,0) = v3[0]; p(3,1) = v3[1]; 
     p(4,0) = v4[0]; p(4,1) = v4[1]; 
 
+    std::cout << "this is p" << std::endl;
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 2; j++) {
+            std::cout << p(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << "this is A" << std::endl;
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            std::cout << A(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+
     pPrime = A.inverse() * p;
     for (int i = 0; i < 5; i++)
     {
         std::cout << "slope " << i << " = " << pPrime(i,0) << " " << pPrime(i,1) << std::endl;
     }
+
+
+    vec3 p_0(137, 121, 0); // Z will just be zero
+    vec3 p_1(221, 313, 0);
+    vec3 p_2(398, 118, 0);
+
+    Eigen::MatrixXd A2(3, 3);
+    Eigen::MatrixXd p22(3, 3);
+    Eigen::MatrixXd pPrime2(3, 3);
+
+    vec3 v_0 = 3.0f * (p_1 - p_0);
+    vec3 v_1 = 3.0f * (p_2 - p_0);
+    vec3 v_2 = 3.0f * (p_2 - p_1);
+
+    // natural end points
+    A2(0, 0) = 2; A2(0, 1) = 1; A2(0, 2) = 0;
+    A2(1, 0) = 1; A2(1, 1) = 4; A2(1, 2) = 1;
+    A2(2, 0) = 0; A2(2, 1) = 1; A2(2, 2) = 2;
+
+    p22(0, 0) = v_0[0]; p22(0, 1) = v_0[1]; p22(0, 2) = v_0[2];
+    p22(1, 0) = v_1[0]; p22(1, 1) = v_1[1]; p22(1, 2) = v_1[2];
+    p22(2, 0) = v_2[0]; p22(2, 1) = v_2[1]; p22(2, 2) = v_2[2];
+
+    pPrime2 = A2.inverse() * p22;
+    std::cout << "this is p22" << std::endl;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            std::cout << p22(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << "this is A2" << std::endl;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            std::cout << A2(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        std::cout << "slope " << i << " = " << pPrime2(i, 0) << " " << pPrime2(i, 1) << " " << pPrime2(i, 2) << std::endl;
+    }
+    
+
 
 }
 

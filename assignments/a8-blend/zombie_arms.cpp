@@ -32,8 +32,8 @@ public:
       Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
       Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
 
-      quat rightShoulderRot = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)))   * inverse(toMat3(motion.getKey(0).jointRots[rightArm->getID()]));
-      quat leftShoulderRot  = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33))) * inverse(toMat3(motion.getKey(0).jointRots[leftArm->getID()]));
+      quat rightShoulderRotOffset = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)))   * inverse(toMat3(motion.getKey(0).jointRots[rightArm->getID()]));
+      quat leftShoulderRotOffset  = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33))) * inverse(toMat3(motion.getKey(0).jointRots[leftArm->getID()]));
 
       Motion result;
       result.setFramerate(motion.getFramerate());
@@ -41,8 +41,8 @@ public:
       for (int i = 0; i < motion.getNumKeys(); i++) {
           Pose pose = motion.getKey(i);
 
-          pose.jointRots[leftArm->getID()] = leftShoulderRot   * pose.jointRots[leftArm->getID()];
-          pose.jointRots[rightArm->getID()] = rightShoulderRot * pose.jointRots[rightArm->getID()];
+          pose.jointRots[leftArm->getID()] = leftShoulderRotOffset   * pose.jointRots[leftArm->getID()];
+          pose.jointRots[rightArm->getID()] = rightShoulderRotOffset * pose.jointRots[rightArm->getID()];
           pose.jointRots[leftElbow->getID()] = elbowLocalRot;
           pose.jointRots[rightElbow->getID()] = elbowLocalRot;
           result.appendKey(pose);

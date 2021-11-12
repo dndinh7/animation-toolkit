@@ -31,14 +31,14 @@ public:
 
       float duration = m1.getDuration() * (1 - alpha) + m2.getDuration() * alpha;
       float deltaT = 1.0f / blend.getFramerate();
-      // todo: replace the following line with your code
       for (float t = 0; t <= duration; t += deltaT) {
-          Pose pose1 = m1.getValue(t);
-          Pose pose2 = m2.getValue(t);
+          float t1 = t / duration * m1.getDuration();
+          float t2 = t / duration * m2.getDuration();
+          Pose pose1 = m1.getValue(t1);
+          Pose pose2 = m2.getValue(t2);
           Pose newPose = Pose::Lerp(pose1, pose2, alpha);
           blend.appendKey(newPose);
       }
-
       return blend;
    }
 

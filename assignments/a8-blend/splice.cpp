@@ -47,7 +47,6 @@ public:
       Pose lowerPose;
       Pose upperPose;
 
-      // todo: your code here
       for (int i = 0; i < lower.getNumKeys(); i++) {
           lowerPose = lower.getKey(i);
           upperPose = upper.getKey(i + 120);

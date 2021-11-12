@@ -38,7 +38,6 @@ public:
       Transform to_origin(glm::angleAxis(0.f, vec3(1, 0, 0)), -first.rootPos);
       Transform desired(angleAxis(heading, vec3(0, 1, 0)), pos);
 
-      // todo: your code here
       for (int i = 0; i < motion.getNumKeys(); i++) {
           Pose rest = motion.getKey(i);
           Transform orig(rest.jointRots[0], rest.rootPos);
@@ -81,7 +80,6 @@ public:
          _reoriented = reorient(_motion, _offset, _heading);
          _time = 0;
       }
-
       if (key == 'W')
       {
          _offset[2] += 25;
@@ -109,6 +107,9 @@ public:
          _reoriented = reorient(_motion, _offset, _heading);
          _time = 0;
          std::cout << _offset << std::endl;
+      }
+      else if (key == GLFW_KEY_SPACE) {
+
       }
    }
 

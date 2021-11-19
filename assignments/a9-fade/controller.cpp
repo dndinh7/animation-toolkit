@@ -77,7 +77,7 @@ public:
 protected:
   float _heading= 0.0f;
   vec3 pos;
-  float speed= 0.5f;
+  float speed= 0.75f;
 
   vec3 globalPos;
   vec3 globalLookPos;

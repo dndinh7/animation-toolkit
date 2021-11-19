@@ -47,7 +47,7 @@ public:
           blend_.appendKey(m1.getKey(i));
       }
 
-      float alpha = 0;
+      
       Pose first = m1.getKey(motion1_.getNumKeys()-1);
       align(first, m2);
 
@@ -55,7 +55,13 @@ public:
           Pose p1 = m1.getKey(start1 + i);
           Pose p2 = m2.getKey(start2 + i);
 
-          blend_.appendKey(Pose::Lerp(p1, p2, alpha+(float)i/(float)(numBlendFrames-1)));
+          //p2.rootPos = vec3(p1.rootPos.x, p2.rootPos.y, p1.rootPos.z)*(1.0f - (float)i / (float)(numBlendFrames - 1)) + p2.rootPos*((float)i / (float)(numBlendFrames - 1));
+
+
+          blend_.appendKey(Pose::Lerp(p1, p2, (float)i/(float)(numBlendFrames-1)));
+          //Pose newPose= blend_.getKey(start1 + i);
+          //newPose.rootPos = vec3(p1.rootPos.x, newPose.rootPos.y, p1.rootPos.z);
+          //blend_.editKey(start1 + i, newPose);
       }
 
       for (int i = numBlendFrames; i < m2.getNumKeys(); i++) {
@@ -88,10 +94,9 @@ public:
 
           Transform res = offset * orig;
 
-          std::cout << "before: " << root.rootPos << std::endl;
           root.rootPos = res.t();
           root.jointRots[0] = res.r();
-          std::cout << "after: " << root.rootPos << std::endl;
+
           m2.editKey(i, root);
       }
 

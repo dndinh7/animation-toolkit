@@ -18,8 +18,9 @@ public:
     BVHReader reader;
     reader.load("../motions/Beta/walking.bvh", _skeleton, _walk);
     _drawer.showAxes = true;
-    pos = vec3(_walk.getKey(0).rootPos.x, 0, _walk.getKey(0).rootPos.z);
     _walk.update(_skeleton, 0);
+
+    pos = vec3(0);
 
     globalPos = _skeleton.getByName("Beta:Head")->getGlobalTranslation();
     
@@ -50,11 +51,13 @@ public:
     _walk.update(_skeleton, elapsedTime());
 
     // TODO: Your code here
+    
     Pose pose= _skeleton.getPose();
     
-    pose.jointRots[0] = glm::angleAxis(_heading, vec3(0, 1, 0));
+    pose.jointRots[0] = glm::angleAxis(_heading, vec3(0, 1, 0)) * pose.jointRots[0];
     pose.rootPos = pos + vec3(0, pose.rootPos.y, 0);
     _skeleton.setPose(pose);
+    
 
     pos += vec3(speed*sin(_heading), 0, speed*cos(_heading));
     globalPos += vec3(speed * sin(_heading), 0, speed * cos(_heading));

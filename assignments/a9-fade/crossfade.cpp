@@ -41,18 +41,43 @@ public:
     crossfade(motion1_, motion2_, start1, start2, numBlendFrames);
   }
 
-  void crossfade(const Motion& m1, const Motion& m2, int start1, int start2, int numBlendFrames) {
+  void crossfade(const Motion& m1, Motion& m2, int start1, int start2, int numBlendFrames) {
       for (int i = 0; i < start1; i++) {
           blend_.appendKey(m1.getKey(i));
       }
 
       float alpha = 0;
+      Pose first = m1.getKey(start1);
+      align(first, m2);
+
       for (int i = 0; i < numBlendFrames; i++) {
-          blend_.appendKey(Pose::Lerp(m1.getKey(start1 + i), m2.getKey(start2 + i), alpha+(float)i/(float)(numBlendFrames-1)));
+          Pose p1 = m1.getKey(start1 + i);
+          Pose p2 = m2.getKey(start2 + i);
+
+          blend_.appendKey(Pose::Lerp(p1, p2, alpha+(float)i/(float)(numBlendFrames-1)));
       }
 
       for (int i = numBlendFrames; i < m2.getNumKeys(); i++) {
           blend_.appendKey(m2.getKey(i));
+      }
+
+  }
+
+  void align(const Pose& p1, Motion& m2) {
+     
+      vec3 posOffset = vec3(p1.rootPos.x, 0, p1.rootPos.z) - vec3(m2.getKey(0).rootPos.x, 0, m2.getKey(0).rootPos.z);
+
+
+      quat rotOffset = p1.jointRots[0] * inverse(m2.getKey(0).jointRots[0]);
+
+      rotOffset.x = 0;
+      rotOffset.z = 0;
+
+      for (int i = 0; i < m2.getNumKeys(); i++) {
+          Pose root = m2.getKey(i);
+          root.rootPos += posOffset;
+          root.jointRots[0] = rotOffset * root.jointRots[0];
+          m2.editKey(i, root);
       }
 
   }

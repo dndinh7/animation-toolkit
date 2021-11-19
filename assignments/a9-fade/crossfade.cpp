@@ -48,7 +48,7 @@ public:
       }
 
       float alpha = 0;
-      Pose first = m1.getKey(start1);
+      Pose first = m1.getKey(motion1_.getNumKeys()-1);
       align(first, m2);
 
       for (int i = 0; i < numBlendFrames; i++) {
@@ -79,14 +79,6 @@ public:
       Transform inv = Transform(heading2, vec3(m2.getKey(0).rootPos.x, 0, m2.getKey(0).rootPos.z)).inverse();
 
       Transform offset = desired * inv;
-     
-      //vec3 posOffset = vec3(p1.rootPos.x, 0, p1.rootPos.z) - vec3(m2.getKey(0).rootPos.x, 0, m2.getKey(0).rootPos.z);
-
-
-      //quat rotOffset = p1.jointRots[0] * inverse(m2.getKey(0).jointRots[0]);
-
-      //rotOffset.x = 0;
-      //rotOffset.z = 0;
 
       for (int i = 0; i < m2.getNumKeys(); i++) {
           

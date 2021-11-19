@@ -126,7 +126,33 @@ class AIKSimple : public atkui::Framework
 
   void solveIKTwoLink(Skeleton &skeleton, const vec3 &goalPosition)
   {
-    // todo: implement two link IK algorithm
+      float l1 = length(skeleton.getByID(1)->getLocalTranslation());
+      float l2 = length(skeleton.getByID(2)->getLocalTranslation());
+
+      float r = length(goalPosition);
+
+      float cphi = (r * r - l1 * l1 - l2 * l2) / (-2.0f * l1 * l2);
+
+      cphi = max(min(cphi, 1.0f), -1.0f); // clamps cphi
+      float phi = acos(cphi);
+
+      float theta2z = phi - pi<float>();
+
+      float sTheta1z = -(l2)*sin(theta2z) / r;
+      sTheta1z = max(min(sTheta1z, 1.0f), -1.0f);
+
+      float theta1z = asin(sTheta1z);
+
+      float beta = atan2(-goalPosition.z, goalPosition.x);
+      float gamma = asin(max(min(goalPosition.y / r, 1.0f), -1.0f));
+
+      quat Ry = angleAxis(beta, vec3(0, 1, 0));
+      quat RzGamma = angleAxis(gamma, vec3(0, 0, 1));
+      quat RzTheta1 = angleAxis(theta1z, vec3(0, 0, 1));
+
+      skeleton.getByID(1)->setLocalRotation(angleAxis(theta2z, vec3(0, 0, 1)));
+      skeleton.getByID(0)->setLocalRotation(Ry*RzGamma*RzTheta1);
+      skeleton.fk();
   }
 
  private:

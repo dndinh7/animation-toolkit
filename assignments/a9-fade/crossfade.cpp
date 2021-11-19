@@ -64,19 +64,41 @@ public:
   }
 
   void align(const Pose& p1, Motion& m2) {
+
+      quat heading1 = p1.jointRots[0];
+      heading1.x = 0;
+      heading1.z = 0;
+
+      Transform desired(heading1, vec3(p1.rootPos.x, 0, p1.rootPos.z));
+
+      quat heading2 = m2.getKey(0).jointRots[0];
+      heading2.x = 0;
+      heading2.z = 0;
+
+      Transform inv = Transform(heading2, vec3(m2.getKey(0).rootPos.x, 0, m2.getKey(0).rootPos.z)).inverse();
+
+      Transform offset = desired * inv;
      
-      vec3 posOffset = vec3(p1.rootPos.x, 0, p1.rootPos.z) - vec3(m2.getKey(0).rootPos.x, 0, m2.getKey(0).rootPos.z);
+      //vec3 posOffset = vec3(p1.rootPos.x, 0, p1.rootPos.z) - vec3(m2.getKey(0).rootPos.x, 0, m2.getKey(0).rootPos.z);
 
 
-      quat rotOffset = p1.jointRots[0] * inverse(m2.getKey(0).jointRots[0]);
+      //quat rotOffset = p1.jointRots[0] * inverse(m2.getKey(0).jointRots[0]);
 
-      rotOffset.x = 0;
-      rotOffset.z = 0;
+      //rotOffset.x = 0;
+      //rotOffset.z = 0;
 
       for (int i = 0; i < m2.getNumKeys(); i++) {
+          
           Pose root = m2.getKey(i);
-          root.rootPos += posOffset;
-          root.jointRots[0] = rotOffset * root.jointRots[0];
+          
+          Transform orig(root.jointRots[0], root.rootPos);
+
+          Transform res = offset * orig;
+
+          std::cout << "before: " << root.rootPos << std::endl;
+          root.rootPos = res.t();
+          root.jointRots[0] = res.r();
+          std::cout << "after: " << root.rootPos << std::endl;
           m2.editKey(i, root);
       }
 
@@ -113,7 +135,7 @@ std::string PruneName(const std::string &name)
 int main(int argc, char **argv)
 {
   std::string motion1 = "../motions/Beta/walking.bvh";
-  std::string motion2 = "../motions/Beta/jump.bvh";
+  std::string motion2 = "../motions/Beta/walking.bvh";
   int numFrames = 10;
 
   try

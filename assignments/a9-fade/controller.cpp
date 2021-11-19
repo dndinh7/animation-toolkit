@@ -18,6 +18,7 @@ public:
     BVHReader reader;
     reader.load("../motions/Beta/walking.bvh", _skeleton, _walk);
     _drawer.showAxes = true;
+    pos = vec3(_walk.getKey(0).rootPos.x, 0, _walk.getKey(0).rootPos.z);
   }
 
   virtual void scene()
@@ -44,9 +45,17 @@ public:
     _walk.update(_skeleton, elapsedTime());
 
     // TODO: Your code here
+    Pose pose= _skeleton.getPose();
+    pose.rootPos = pos + vec3(0, pose.rootPos.y, 0);
+    pose.jointRots[0] = glm::angleAxis(_heading, vec3(0, 1, 0));
+    _skeleton.setPose(pose);
+
+    
+    vec3 globalHeadPos = _skeleton.getByName("Beta:Head")->getGlobalTranslation();
+    vec3 globalPosCam = globalHeadPos + vec3(0, 100, -100);
 
     // TODO: Override the default camera to follow the character
-    // lookAt(pos, look, vec3(0, 1, 0));
+    lookAt(globalPosCam, globalHeadPos, vec3(0, 1, 0));
 
     // update heading when key is down
     if (keyIsDown('D')) _heading -= 0.05;
@@ -54,7 +63,8 @@ public:
   }
 
 protected:
-  float _heading;
+  float _heading= 0.0f;
+  vec3 pos;
 
   Motion _walk;
   Skeleton _skeleton;

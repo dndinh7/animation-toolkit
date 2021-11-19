@@ -18,6 +18,7 @@ public:
   {
     BVHReader reader;
     reader.load(filename, skeleton_, motion1_);
+    blend_.setFramerate(motion1_.getFramerate());
   }
 
   void loadMotion2(const std::string &filename)
@@ -113,7 +114,7 @@ public:
 
   void scene()
   {
-    blend_.update(skeleton_, elapsedTime()*0.25f);
+    blend_.update(skeleton_, elapsedTime());
     drawer_.draw(skeleton_, *this);
   }
 
@@ -135,7 +136,7 @@ std::string PruneName(const std::string &name)
 int main(int argc, char **argv)
 {
   std::string motion1 = "../motions/Beta/walking.bvh";
-  std::string motion2 = "../motions/Beta/walking.bvh";
+  std::string motion2 = "../motions/Beta/jump.bvh";
   int numFrames = 10;
 
   try

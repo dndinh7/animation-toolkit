@@ -38,29 +38,25 @@ public:
     int start2 = 0;
 
     
-    append(motion1_, motion2_);
-    //blend(motion1_, motion2_, start1, start2, numBlendFrames, 0.5f);
+    crossfade(motion1_, motion2_, start1, start2, numBlendFrames);
   }
 
-  void append(const Motion& m1, const Motion& m2) {
-      for (int i = 0; i < m1.getNumKeys(); i++) {
+  void crossfade(const Motion& m1, const Motion& m2, int start1, int start2, int numBlendFrames) {
+      for (int i = 0; i < start1; i++) {
           blend_.appendKey(m1.getKey(i));
       }
-      for (int i = 0; i < m2.getNumKeys(); i++) {
+
+      float alpha = 0;
+      for (int i = 0; i < numBlendFrames; i++) {
+          blend_.appendKey(Pose::Lerp(m1.getKey(start1 + i), m2.getKey(start2 + i), alpha+(float)i/(float)(numBlendFrames-1)));
+      }
+
+      for (int i = numBlendFrames; i < m2.getNumKeys(); i++) {
           blend_.appendKey(m2.getKey(i));
       }
 
   }
 
-  void blend(const Motion& m1, const Motion& m2, int start1, int start2, int numBlendFrames, float alpha) {
-      for (int i = 0; i < numBlendFrames; i++) {
-          Pose p1 = m1.getKey(start1+i);
-          Pose p2 = m2.getKey(start2+i);
-          Pose newPose = Pose::Lerp(p1, p2, alpha);
-          blend_.appendKey(newPose);
-      }
-
-  }
 
   void save(const std::string &filename)
   {

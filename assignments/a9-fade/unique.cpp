@@ -11,51 +11,64 @@ using namespace glm;
 class Unique9 : public atkui::Framework {
 public:
 	Unique9() : atkui::Framework(atkui::Perspective) {
+        for (int i = 0; i < numArms; i++) {
+            armDrawer.push_back(atkui::SkeletonDrawer());
+        }
 
-        mDrawer.color = vec3(1, 0, 0);
-        mDrawer2.color = vec3(0, 1, 0);
-        ballPos = vec3(0, 0, 0);
+        for (int i = 0; i < numArms/2; i++) {
+            vec3 color = vec3(agl::random(), agl::random(), agl::random());
+            armDrawer[i].color = color;
+            armDrawer[i + numArms/2].color = color;
+            ballCol.push_back(color);
+        }
+        
 	}
 
 	void setup() {
-        Joint* shoulder1 = new Joint("Shoulder1");
-        arm1.addJoint(shoulder1);
-        shoulder1->setLocalTranslation(vec3(200, 0, 0));
+        Skeleton arm;
+        for (int i = 0; i < numArms; i++) {
+            arm = Skeleton();
+            arms.push_back(arm);
+            Joint* shoulder = new Joint("Shoulder");
+            arms[i].addJoint(shoulder);
+            shoulder->setLocalTranslation(vec3(350*sin(2*pi<float>()*((float)i/(float)numArms)), 0, 350 * cos(2 * pi<float>()*((float)i / (float)numArms))));
 
-        Joint* elbow1 = new Joint("Elbow1");
-        arm1.addJoint(elbow1, shoulder1);
-        elbow1->setLocalTranslation(vec3(100, 0, 0));
+            Joint* elbow = new Joint("Elbow");
+            arms[i].addJoint(elbow, shoulder);
+            elbow->setLocalTranslation(vec3(100, 0, 0));
 
-        Joint* wrist1 = new Joint("Wrist1");
-        arm1.addJoint(wrist1, elbow1);
-        wrist1->setLocalTranslation(vec3(80, 0, 0));
+            Joint* wrist = new Joint("Wrist");
+            arms[i].addJoint(wrist, elbow);
+            wrist->setLocalTranslation(vec3(80, 0, 0));
 
-        Joint* shoulder2 = new Joint("Shoulder2");
-        arm2.addJoint(shoulder2);
-        shoulder2->setLocalTranslation(vec3(-200, 0, 0));
+            arms[i].fk();
+            
+        }
 
-        Joint* elbow2 = new Joint("Elbow2");
-        arm2.addJoint(elbow2, shoulder2);
-        elbow2->setLocalTranslation(vec3(100, 0, 0));
+        numBalls = numArms / 2;
 
-        Joint* wrist2 = new Joint("Wrist2");
-        arm2.addJoint(wrist2, elbow2);
-        wrist2->setLocalTranslation(vec3(80, 0, 0));
+        for (int i = 0; i < numBalls; i++) {
 
-        arm1.fk();
-        arm2.fk();
+            ballPos.push_back(vec3(349 * sin(2 * pi<float>() * ((float)i / (float)numArms)), 135, 349 * cos(2 * pi<float>() * ((float)i / (float)numArms))));
+            ballPosDraw.push_back(vec3(0));
+        }
+
 	}
 
 	void scene() {
-        mDrawer.draw(arm1, *this);
-        mDrawer2.draw(arm2, *this);
+        for (int i = 0; i < numArms; i++) {
+            armDrawer[i].draw(arms[i], *this);
+        }
 
-        setColor(vec3(0, 0, 1));
-        ballPos = vec3(0, 100*sin(elapsedTime()), 100*cos(elapsedTime()));
-        drawSphere(ballPos, 25.0f);
+        for (int i = 0; i < numBalls; i++) {
+            setColor(ballCol[i]);
+            ballPosDraw[i] = vec3(ballPos[i].x * cos(elapsedTime()*2.0f + i*0.5f), ballPos[i].y, ballPos[i].z * cos(elapsedTime()*2.0f + i*0.5f));
+            drawSphere(ballPosDraw[i], 25.0f);
+
+            solveIKTwoLink(arms[i], ballPosDraw[i]);
+            solveIKTwoLink(arms[i + numArms/2], ballPosDraw[i]);
+        }
        
-        solveIKTwoLink(arm1, ballPos);
-        solveIKTwoLink(arm2, ballPos);
 	}
 
     void solveIKTwoLink(Skeleton& skeleton, const vec3& goalPosition)
@@ -95,14 +108,19 @@ public:
     }
 
 protected:
+    std::vector<Skeleton> arms;
+    std::vector<atkui::SkeletonDrawer> armDrawer;
+    int numArms = 32; // has to be even
+    int numBalls;
+    std::vector<vec3> ballPos;
+    std::vector<vec3> ballCol;
+    std::vector<vec3> ballPosDraw;
+
     atk::Skeleton arm1;
     atk::Skeleton arm2;
     atkui::SkeletonDrawer mDrawer;
     atkui::SkeletonDrawer mDrawer2;
 
-    vec3 ballPos;
-    vec3 ballVel;
-    vec3 ballAccel;
 };
 
 int main(int argc, char** argv) {

@@ -18,4 +18,4 @@ This animation shows the skeleton pointing towards the target using inverse kine
 # Throw and Catch
 ![unique](https://user-images.githubusercontent.com/72237791/142712813-e1fba790-edb4-46d3-b745-749f58f4ee4f.gif)
 
-This animation shows a bunch of arms throwing and catching balls. You can change the numArms in the code to change how many arms you want there to be in the circle.
+This animation shows a bunch of arms throwing and catching balls. You can change the variable numArms in the code to change how many arms there will be in a circle.

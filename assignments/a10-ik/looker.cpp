@@ -37,13 +37,11 @@ public:
        vec3 Z = normalize(target - head->getGlobalTranslation());
        vec3 X = normalize(cross(vec3(0, 1, 0), Z));
        vec3 Y = normalize(cross(Z, X));
+        
+       quat desiredRot = mat3(X, Y, Z);
+       
+       head->setLocalRotation(head->getLocalRotation() * inverse(head->getGlobalRotation()) * desiredRot);
 
-      
-       Transform desired(mat3(X, Y, Z), head->getGlobalTranslation());
-
-       desired = head->getLocal2Global().inverse() * desired;
-
-       head->setLocal2Parent(head->getLocal2Parent() * desired);
        head->fk();
    }
 

@@ -36,27 +36,10 @@ public:
 
        vec3 Z = normalize(target - head->getGlobalTranslation());
        vec3 X = normalize(cross(vec3(0, 1, 0), Z));
-       vec3 Y = normalize(cross(X, Z));
+       vec3 Y = normalize(cross(Z, X));
 
-
-       std::cout << "x: " << X << std::endl;
-       std::cout << "y: " << Y << std::endl;
-       std::cout << "z: " << Z << std::endl;
-       
-
-       mat3 lol;
-
-       lol[0][0] = X.x;
-       lol[1][0] = X.y;
-       lol[2][0] = X.z;
-       lol[0][1] = Y.x;
-       lol[1][1] = Y.y;
-       lol[2][1] = Y.z;
-       lol[0][2] = Z.x;
-       lol[1][2] = Z.y;
-       lol[2][2] = Z.z;
-
-       Transform desired(lol, head->getGlobalTranslation());
+      
+       Transform desired(mat3(X, Y, Z), head->getGlobalTranslation());
 
        desired = head->getLocal2Global().inverse() * desired;
 

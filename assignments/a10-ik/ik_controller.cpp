@@ -1,4 +1,5 @@
 #include "ik_controller.h"
+#include "atkui/framework.h"
 #include <cmath>
 #include <iostream>
 
@@ -52,28 +53,63 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   quat R21 = angleAxis(theta2z, axis);
 
-  skeleton.getByID(j2->getID())->setLocalRotation(R21);
+  Transform F21(R21, j2->getLocalTranslation());
 
-  skeleton.fk();
+  Transform F10(IdentityQ, j1->getGlobalTranslation());
 
-  vec3 p30 = j3->getGlobalTranslation();
+  Transform F32(IdentityQ, j3->getLocalTranslation());
+
+  vec3 p30 = (F10*F21*F32).transformPoint(vec3(0));
 
   vec3 r_bar = p30 - j1->getGlobalTranslation();
 
-
   vec3 e_bar = goalPos - p30;
 
-  float cphi2 = length(cross(r_bar, e_bar));
+  vec3 rXe = cross(r_bar, e_bar);
 
-  float phi2 = atan2(length(cross(r_bar, e_bar)), dot(r_bar, r_bar) + dot(r_bar, e_bar));
+  float phi2 = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
 
-  vec3 axis2 = normalize(cross(r_bar, e_bar));
+  vec3 u = normalize(rXe);
 
-  quat R10 = angleAxis(phi2, axis2);
+
+  F10= Transform(angleAxis(phi2, u), j1->getLocalTranslation());
+  F32= Transform(angleAxis(0.0f, vec3(0, 0, 1)), j3->getLocalTranslation());
+
+  j1->setLocal2Parent(F10);
+  j2->setLocal2Parent(F21);
+  j3->setLocal2Parent(F32);
 
   skeleton.fk();
 
-  if (length(j3->getGlobalTranslation()) - length(goalPos) > epsilon) return false;
+  /*vec3 p30 = j3->getGlobalTranslation();
+
+  vec3 r_bar = p30 - j1->getGlobalTranslation();
+
+  vec3 e_bar = goalPos - p30;
+
+  vec3 rXe = cross(r_bar, e_bar);
+
+  float phi2 = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
+
+  std::cout << phi2 << std::endl;
+
+  vec3 axis2;
+
+  if (length(rXe) == 0) {
+      axis2 = vec3(0, 0, 1);
+  }
+  else {
+      axis2 = normalize(cross(r_bar, e_bar));
+  }
+  quat R10 = angleAxis(phi2, axis2);
+
+  Transform F10(R10, j1->getLocalTranslation());
+
+  j1->setLocal2Parent(F10);
+  
+
+  skeleton.fk();*/
+
 
 
   return true;
@@ -86,8 +122,8 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
   if (chain.size() == 0) return true;
 
   // TODO: Your code here
-  
-  std::cout << skeleton.getByID(jointid)->getLocalTranslation() << std::endl;
+
+  //std::cout << skeleton.getRoot()->getGlobalTranslation() << std::endl; // this line does not work?
 
   return false;
 }

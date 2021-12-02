@@ -70,6 +70,10 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   float phi2 = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
 
   vec3 u = normalize(rXe);
+  if (length(rXe) == 0) {
+      u = vec3(0, 0, 1);
+  }
+  
 
 
   F10= Transform(angleAxis(phi2, u), j1->getLocalTranslation());
@@ -80,37 +84,6 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   j3->setLocal2Parent(F32);
 
   skeleton.fk();
-
-  /*vec3 p30 = j3->getGlobalTranslation();
-
-  vec3 r_bar = p30 - j1->getGlobalTranslation();
-
-  vec3 e_bar = goalPos - p30;
-
-  vec3 rXe = cross(r_bar, e_bar);
-
-  float phi2 = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
-
-  std::cout << phi2 << std::endl;
-
-  vec3 axis2;
-
-  if (length(rXe) == 0) {
-      axis2 = vec3(0, 0, 1);
-  }
-  else {
-      axis2 = normalize(cross(r_bar, e_bar));
-  }
-  quat R10 = angleAxis(phi2, axis2);
-
-  Transform F10(R10, j1->getLocalTranslation());
-
-  j1->setLocal2Parent(F10);
-  
-
-  skeleton.fk();*/
-
-
 
   return true;
 }

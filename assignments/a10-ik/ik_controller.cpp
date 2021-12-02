@@ -75,7 +75,6 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   }
   
 
-
   F10= Transform(angleAxis(phi2, u), j1->getLocalTranslation());
   F32= Transform(angleAxis(0.0f, vec3(0, 0, 1)), j3->getLocalTranslation());
 

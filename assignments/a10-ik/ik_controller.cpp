@@ -80,11 +80,11 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   Joint* par= j1->getParent();
 
-  vec3 rotAxis = par->getLocal2Global().inverse().transformVector(u);
+  vec3 rotAxis = (j1 != hip) ? par->getLocal2Global().inverse().transformVector(u) : u;
 
-  Transform F10= Transform(angleAxis(phi2, rotAxis), vec3(0));
+  Transform F10= Transform(angleAxis(phi2, rotAxis), j1->getLocalTranslation());
 
-  j1->setLocal2Parent(j1->getLocal2Parent() * F10);
+  j1->setLocal2Parent(F10);
   
   skeleton.fk();
 
@@ -103,10 +103,46 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
   Joint* endEffector = skeleton.getByID(jointid);
 
   vec3 EEPos = endEffector->getGlobalTranslation();
+  int iterations = 0;
 
-  while (length(goalPos - )) {
+  while (length(goalPos - EEPos) > threshold && iterations < maxIters) {
+      for (int i = 0; i < chain.size(); i++) {
+          Joint* rotJoint = chain[i];
 
+          vec3 rotJointPos = rotJoint->getGlobalTranslation();
+
+          vec3 r_bar = EEPos - rotJointPos;
+
+          vec3 e_bar = goalPos - EEPos;
+
+          vec3 rXe = cross(r_bar, e_bar);
+
+          float phi = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
+
+          vec3 u = normalize(rXe);
+          if (length(rXe) == 0) {
+              u = vec3(0, 0, 1);
+          }
+
+          float nudgeAngle = nudgeFactor * phi;
+
+          Joint* par = rotJoint->getParent();
+
+          vec3 rotAxis = (par != skeleton.getRoot()) ? par->getLocal2Global().inverse().transformVector(u) : u;
+
+          Transform F = Transform(angleAxis(nudgeAngle, rotAxis), vec3(0));
+
+          rotJoint->setLocal2Parent(rotJoint->getLocal2Parent() * F);
+
+          skeleton.fk();
+
+          EEPos = endEffector->getGlobalTranslation();
+
+      }
+      iterations++;
   }
+
+  if (length(goalPos - EEPos) < threshold) return true;
 
   return false;
 }

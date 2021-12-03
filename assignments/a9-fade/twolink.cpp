@@ -160,7 +160,7 @@ class AIKSimple : public atkui::Framework
       skeleton.fk();
 
   }
-
+   
  private:
   atk::Skeleton mActor;
   atkui::SkeletonDrawer mDrawer;

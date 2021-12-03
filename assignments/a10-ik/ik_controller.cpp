@@ -78,14 +78,14 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
       u = vec3(0, 0, 1);
   }
 
-  Joint* par= j1->getParent();
+  Joint* par = j1->getParent();
 
-  vec3 rotAxis = (j1 != hip) ? par->getLocal2Global().inverse().transformVector(u) : u;
+  vec3 rotAxis = (j1 != skeleton.getRoot()) ? par->getLocal2Global().inverse().transformVector(u) : u;
 
-  Transform F10= Transform(angleAxis(phi2, rotAxis), j1->getLocalTranslation());
+  Transform F10 = Transform(angleAxis(phi2, rotAxis), vec3(0));
 
-  j1->setLocal2Parent(F10);
-  
+  j1->setLocal2Parent(j1->getLocal2Parent() * F10);
+
   skeleton.fk();
 
   if (length(goalPos - j3->getGlobalTranslation()) <= epsilon) return true; // if within epsilon of goal, then we reached goal

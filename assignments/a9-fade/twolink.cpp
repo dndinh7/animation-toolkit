@@ -159,9 +159,6 @@ class AIKSimple : public atkui::Framework
       skeleton.getByID(2)->setLocal2Parent(F32);
       skeleton.fk();
 
-      //skeleton.getByID(1)->setLocalRotation(angleAxis(theta2z, vec3(0, 0, 1)));
-      //skeleton.getByID(0)->setLocalRotation(Ry*RzGamma*RzTheta1);
-      //skeleton.fk();
   }
 
  private:

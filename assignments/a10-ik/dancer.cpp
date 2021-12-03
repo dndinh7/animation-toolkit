@@ -33,9 +33,7 @@ public:
       IKController ik;
       // TODO: Your code here
       ik.solveIKAnalytic(_skeleton, _skeleton.getByName("Beta:LeftHand")->getID(), _lhandTarget, 0.001f);
-      std::cout << "left target: " << _lhandTarget << std::endl;
-      std::cout << "left hand: " << _skeleton.getByName("Beta:LeftHand")->getGlobalTranslation() << std::endl;
-      //ik.solveIKAnalytic(_skeleton, _skeleton.getByName("Beta:RightHand")->getID(), _rhandTarget, 0.001f);
+      ik.solveIKAnalytic(_skeleton, _skeleton.getByName("Beta:RightHand")->getID(), _rhandTarget, 0.001f);
 
    }
 

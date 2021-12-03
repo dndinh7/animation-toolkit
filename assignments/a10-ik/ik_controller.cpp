@@ -55,11 +55,15 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   Transform F21(R21, j2->getLocalTranslation());
 
-  Transform F10(IdentityQ, j1->getGlobalTranslation());
+  j2->setLocal2Parent(F21);
 
-  Transform F32(IdentityQ, j3->getLocalTranslation());
+  Transform Id(IdentityQ, j1->getLocalTranslation());
 
-  vec3 p30 = (F10*F21*F32).transformPoint(vec3(0));
+  j1->setLocal2Parent(Id);
+
+  skeleton.fk();
+
+  vec3 p30 = j3->getGlobalTranslation();
 
   vec3 r_bar = p30 - j1->getGlobalTranslation();
 
@@ -73,18 +77,20 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   if (length(rXe) == 0) {
       u = vec3(0, 0, 1);
   }
+
+  Joint* par= j1->getParent();
+
+  vec3 rotAxis = par->getLocal2Global().inverse().transformVector(u);
+
+  Transform F10= Transform(angleAxis(phi2, rotAxis), vec3(0));
+
+  j1->setLocal2Parent(j1->getLocal2Parent() * F10);
   
-
-  F10= Transform(angleAxis(phi2, u), j1->getLocalTranslation());
-  F32= Transform(angleAxis(0.0f, vec3(0, 0, 1)), j3->getLocalTranslation());
-
-  j1->setLocal2Parent(F10);
-  j2->setLocal2Parent(F21);
-  j3->setLocal2Parent(F32);
-
   skeleton.fk();
 
-  return true;
+  if (length(goalPos - j3->getGlobalTranslation()) <= epsilon) return true; // if within epsilon of goal, then we reached goal
+
+  return false;
 }
 
 bool IKController::solveIKCCD(Skeleton& skeleton, int jointid, 
@@ -94,8 +100,13 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
   if (chain.size() == 0) return true;
 
   // TODO: Your code here
+  Joint* endEffector = skeleton.getByID(jointid);
 
-  //std::cout << skeleton.getRoot()->getGlobalTranslation() << std::endl; // this line does not work?
+  vec3 EEPos = endEffector->getGlobalTranslation();
+
+  while (length(goalPos - )) {
+
+  }
 
   return false;
 }

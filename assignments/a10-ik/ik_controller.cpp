@@ -27,9 +27,10 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   Joint* hip = knee->getParent();
 
-
   // TODO: Your code here
   Joint* j3 = skeleton.getByID(jointid);
+
+  if (length(goalPos - j3->getGlobalTranslation()) <= epsilon) return true; // if within epsilon of goal, then we reached goal
 
   Joint* j2 = j3->getParent();
 
@@ -53,13 +54,9 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   quat R21 = angleAxis(theta2z, axis);
 
-  Transform F21(R21, j2->getLocalTranslation());
+  j2->setLocalRotation(R21);
 
-  j2->setLocal2Parent(F21);
-
-  Transform Id(IdentityQ, j1->getLocalTranslation());
-
-  j1->setLocal2Parent(Id);
+  j1->setLocalRotation(IdentityQ);
 
   skeleton.fk();
 
@@ -74,17 +71,15 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
   float phi2 = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
 
   vec3 u = normalize(rXe);
-  if (length(rXe) == 0) {
+  if (length(rXe) <= epsilon) {
       u = vec3(0, 0, 1);
   }
 
   Joint* par = j1->getParent();
 
-  vec3 rotAxis = (j1 != skeleton.getRoot()) ? par->getLocal2Global().inverse().transformVector(u) : u;
+  quat rot = angleAxis(phi2, inverse(par->getGlobalRotation()) * u);
 
-  Transform F10 = Transform(angleAxis(phi2, rotAxis), vec3(0));
-
-  j1->setLocal2Parent(j1->getLocal2Parent() * F10);
+  j1->setLocalRotation(rot * j1->getLocalRotation());
 
   skeleton.fk();
 
@@ -105,6 +100,9 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
   Joint* endEffector = skeleton.getByID(jointid);
 
   vec3 EEPos = endEffector->getGlobalTranslation();
+
+  if (length(goalPos - EEPos) < threshold) return true;
+
   int iterations = 0;
 
   while (length(goalPos - EEPos) > threshold && iterations < maxIters) {
@@ -117,7 +115,7 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
 
           vec3 e_bar = goalPos - EEPos;
 
-          if (length(e_bar) >= epsilon) {
+          if (length(e_bar) > epsilon) {
               vec3 rXe = cross(r_bar, e_bar);
 
               float phi = atan2(length(rXe), dot(r_bar, r_bar) + dot(r_bar, e_bar));
@@ -141,7 +139,7 @@ bool IKController::solveIKCCD(Skeleton& skeleton, int jointid,
       iterations++;
   }
 
-  if (length(goalPos - EEPos) < threshold) return true;
+  if (length(goalPos - EEPos) <= threshold) return true;
 
   return false;
 }

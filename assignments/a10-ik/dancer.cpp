@@ -59,8 +59,8 @@ public:
       _rhandTarget = vec3(0, 42.5f * sin(4.0f*elapsedTime() + 1.5f), 0) + _rhandTargetOffset;
       
 
-      drawSphere(_lhandTarget, 10);
-      drawSphere(_rhandTarget, 10);
+      /*drawSphere(_lhandTarget, 10);
+      drawSphere(_rhandTarget, 10);*/
    }
 
 protected:

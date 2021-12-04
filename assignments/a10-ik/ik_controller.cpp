@@ -77,7 +77,7 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
   Joint* par = j1->getParent();
 
-  quat rot = angleAxis(phi2, inverse(par->getGlobalRotation()) * u);
+  quat rot = (j1 != skeleton.getRoot()) ? angleAxis(phi2, inverse(par->getGlobalRotation()) * u) : angleAxis(phi2, u);
 
   j1->setLocalRotation(rot * j1->getLocalRotation());
 

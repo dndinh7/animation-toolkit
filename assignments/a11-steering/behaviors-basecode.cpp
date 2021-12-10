@@ -139,6 +139,8 @@ AAvoid::AAvoid() : ABehavior("Avoid")
 vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
+
+    
     return vec3(0,0,0);
 }
 //--------------------------------------------------------------
@@ -148,9 +150,9 @@ AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
    setParam("center", 250);
-   setParam("r1", 100);
-   setParam("r2", 20);
-
+   setParam("wanderStrength", 100);
+   setParam("r1", 0.5);
+   setParam("angle", 0);
 }
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
@@ -158,10 +160,19 @@ vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
     vec3 p = actor.getPosition();
-    vec3 dir = normalize(target - p);
-    vec3 jitVel = vec3(getParam("r2")*rand(), 0, getParam("r2") * rand());
+    vec3 circlePos;
+    if (length(actor.getVelocity()) == 0) {
+        circlePos = p + normalize(actor.getRotation() * vec3(0, 0, 1)) * getParam("center");
+    }
+    else {
+        circlePos = p + normalize(actor.getVelocity()) * getParam("center");
+    }
 
-   return dir * getParam("MaxSpeed") + getParam("r1") * normalize(jitVel);
+    setParam("angle", getParam("angle") + agl::random(-getParam("r1"), getParam("r1")));
+    
+    vec3 jitVelPos = circlePos + getParam("wanderStrength") * vec3(sin(getParam("angle")), 0, cos(getParam("angle")));
+
+    return normalize(jitVelPos - p) * getParam("MaxSpeed");
 }
 
 //--------------------------------------------------------------

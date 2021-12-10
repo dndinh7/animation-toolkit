@@ -156,8 +156,7 @@ void ABehaviorViewer::runGui()
    ImGui::NewFrame();
 
    static const char* type[] = {
-      "Seek", "Flee", "Arrival", "Departure", "Avoid", "Alignment",
-      "Wander", "Separation", "Cohesion", "Flocking", "Leader"
+      "Seek", "Flee", "Arrival", "Departure", "Avoid", "Wander", "Alignment", "Separation", "Cohesion", "Flocking", "Leader"
    };
 
    ImGui::Begin("Demo Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize);

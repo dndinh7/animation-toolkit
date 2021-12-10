@@ -29,10 +29,6 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 
 	_torque = _inertia * (-kOriKv * _state[AVEL] + kOriKp * thetaDif);
 
-	std::cout << _torque << std::endl;
-
-
-
 	// find derivative
 	
 	_derivative[POS]  = _state[VEL];

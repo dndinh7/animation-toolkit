@@ -45,6 +45,7 @@ protected:
    glm::vec3 _target;
    int _numAgents;
    int _numObstacles;
+   int _maxSpeed;
 
    // Behaviors
    typedef std::map<BehaviorType, ABehavior*> BehaviorMap;

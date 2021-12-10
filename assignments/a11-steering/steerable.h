@@ -34,6 +34,7 @@ protected:
    atk::Motion _idle;
    atk::Transform _characterRoot;
    float _time;
+   float _maxSpeed;
 
    // rigid body state and derivative
    enum {POS, ORI, VEL, AVEL};

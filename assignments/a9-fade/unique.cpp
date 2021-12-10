@@ -59,7 +59,6 @@ public:
         for (int i = 0; i < numArms; i++) {
             armDrawer[i].draw(arms[i], *this);
         }
-
         for (int i = 0; i < numBalls; i++) {
             setColor(ballCol[i]);
             ballPosDraw[i] = vec3(ballPos[i].x * cos(elapsedTime()*2.0f + i*0.5f), ballPos[i].y, ballPos[i].z * cos(elapsedTime()*2.0f + i*0.5f));
@@ -68,7 +67,6 @@ public:
             solveIKTwoLink(arms[i], ballPosDraw[i]);
             solveIKTwoLink(arms[i + numArms/2], ballPosDraw[i]);
         }
-       
 	}
 
     void solveIKTwoLink(Skeleton& skeleton, const vec3& goalPosition)

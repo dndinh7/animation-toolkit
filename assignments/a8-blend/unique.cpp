@@ -228,6 +228,7 @@ public:
         if (showWASD) {
             vec3 origin = _skeleton.getByName("Beta:Hips")->getGlobalTranslation() + vec3(0, 200, 0);
 
+            
             setColor(vec3(0, 1, 0));
             drawEllipsoid(origin, origin + wasd[1], 10.0f); // w dir
             setColor(vec3(1, 0, 0));

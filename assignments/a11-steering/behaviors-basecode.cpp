@@ -1,9 +1,11 @@
 #include "behaviors.h"
 #include "steerable.h"
 #include <cmath>
+#include <limits>
 
 using namespace glm;
 using namespace atk;
+
 
 //--------------------------------------------------------------
 // Shared properties for all behaviors
@@ -11,7 +13,7 @@ ABehavior::ABehavior(const char* name) : _name(name)
 {
    // TODO: set good values
    setParam("MaxSpeed", 150);
-   setParam("AgentRadius", 10);
+   setParam("AgentRadius", 100);
    setParam("Threshold", 50);
 }
 
@@ -131,6 +133,8 @@ vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
 AAvoid::AAvoid() : ABehavior("Avoid") 
 {
    setParam("kAvoid", 1);
+   setParam("danger", getParam("MaxSpeed"));
+   setParam("radiusDanger", 125);
 }
 
 // If an actor is near an obstacle, avoid adds either a tangential or
@@ -138,10 +142,53 @@ AAvoid::AAvoid() : ABehavior("Avoid")
 //  Obstacles are in getWorld()->getObstacle(i) and have class type AObstacle
 vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
-{
+{   
+    vec3 p = actor.getPosition();
+    vec3 lineOfSight;
+    vec3 toTarget = targetPos - p;
 
+    std::vector<vec3> circPos;
+    std::vector<float> circRad;
+
+    if (length(actor.getVelocity()) == 0) {
+        lineOfSight = normalize(actor.getRotation() * vec3(0, 0, 1)) * getParam("danger");
+    }
+    else {
+        lineOfSight = normalize(actor.getVelocity()) * getParam("danger");
+    }
+
+    //vec3 upLOS  = p + getParam("radiusDanger") * normalize(actor.getRotation() * vec3(1, 0, 0));
+    //vec3 lowLOS = p - getParam("radiusDanger") * normalize(actor.getRotation() * vec3(1, 0, 0));
     
-    return vec3(0,0,0);
+    vec3 closestObstacle = vec3(std::numeric_limits<float>::max());
+    bool intersect = false;
+
+    for (int i = 0; i < world.getNumObstacles(); i++) {
+        vec3 actToCirc = world.getObstacle(i).position - p;
+        float circRad = world.getObstacle(i).radius;
+
+
+        float angle = acos((dot(toTarget, actToCirc)) / (length(toTarget) * length(actToCirc)));
+
+        float distToLine = sin(angle) * length(actToCirc);
+        std::cout << "dist: " << distToLine << std::endl;
+        std::cout << "rad: " << circRad << std::endl;
+        if (distToLine <= circRad) {
+            intersect = true;
+            if (length(actToCirc) < length(closestObstacle - p)) {
+                closestObstacle = world.getObstacle(i).position;
+            }
+        }
+    }
+
+
+    AFlee fleer = AFlee::AFlee();
+
+    if (intersect) return fleer.calculateDesiredVelocity(actor, world, closestObstacle);
+
+    ASeek seeker = ASeek::ASeek();
+
+    return seeker.calculateDesiredVelocity(actor, world, targetPos);
 }
 //--------------------------------------------------------------
 // Wander behavior
@@ -180,7 +227,7 @@ vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
 
 ASeparation::ASeparation() : ABehavior("Separation")
 {
-   setParam("Neighborhood", 1);
+   setParam("Neighborhood", 200);
    setParam("kSeparation", 1);
 }
 
@@ -192,7 +239,23 @@ ASeparation::ASeparation() : ABehavior("Separation")
 vec3 ASeparation::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+    vec3 desired = vec3(0);
+    vec3 p = actor.getPosition();
+    for (int i = 0; i < world.getNumAgents(); i++) {
+        if (!(world.getAgent(i) == actor)) {
+
+            vec3 pi = world.getAgent(i).getPosition();
+            if (length(p - pi) <= getParam("Neighborhood")) {
+
+                desired += (p - pi) / (length(p - pi) * length(p - pi));
+
+            }
+        }
+    }
+
+    if (length(desired) == 0) return vec3(0);
+
+    return normalize(desired) * getParam("MaxSpeed");;
 }
 
 

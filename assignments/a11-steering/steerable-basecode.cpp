@@ -20,17 +20,19 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 	_vd = length(veld);
 	_thetad = atan2(veld.x, veld.z);
 
+	_thetad = (_thetad == 0) ? _state[ORI] : _thetad;
+
 
 	// compute _force and _torque
 	_force = _mass * kVelKv * (_vd - _state[VEL]);
 
-	float thetaDif = fmod(_thetad - _state[1] + pi<float>(), 2 * pi<float>()) - pi<float>();
+	float thetaDif = fmod(_thetad - _state[ORI] + pi<float>(), 2 * pi<float>()) - pi<float>();
 
 
 	_torque = _inertia * (-kOriKv * _state[AVEL] + kOriKp * thetaDif);
 
+
 	// find derivative
-	
 	_derivative[POS]  = _state[VEL];
 	_derivative[ORI]  = _state[AVEL];
 	_derivative[VEL]  = _force / _mass;
@@ -60,5 +62,11 @@ void ASteerable::randomizeAppearance()
 
    // to randomize shape, compute random values for _drawer.setJointRadius
    // or randomly assign different drawers to have a mix of characters
+	_time = agl::random(0, 1000.0f);
+
+	_drawer.color = vec3(agl::random(), agl::random(), agl::random());
+
+	_drawer.jointRadius = agl::random(0, 50.0f);
+
 }
 

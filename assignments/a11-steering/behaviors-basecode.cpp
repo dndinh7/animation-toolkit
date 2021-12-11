@@ -36,8 +36,9 @@ vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
     vec3 p = actor.getPosition();
-    vec3 dir = (length(p - target) <= getParam("Threshold")) ? vec3(0) : normalize(target - p);
-    return getParam("MaxSpeed")*dir;
+
+    vec3 desired = (length(p - target) <= getParam("Threshold")) ? vec3(0) : normalize(target - p) * getParam("MaxSpeed");
+    return desired;
 }
 
 //--------------------------------------------------------------
@@ -86,14 +87,16 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
     vec3 p = actor.getPosition();
     vec3 targetOffset = targetPos - p;
     float dist = length(targetOffset);
-    targetOffset = (dist <= getParam("Threshold")) ? vec3(0) : targetOffset;
+
     float speed;
     if (dist <= getParam("TargetRadius")) {
         speed = (dist / getParam("TargetRadius")) * getParam("MaxSpeed");
     } else {
         speed = getParam("MaxSpeed");
     }
-    return speed * (targetOffset / dist);
+
+    vec3 desired = (dist <= getParam("Threshold")) ? vec3(0) : (targetOffset / dist) * getParam("MaxSpeed");
+    return desired;
 }
 
 //--------------------------------------------------------------
@@ -272,6 +275,7 @@ vec3 ACohesion::calculateDesiredVelocity(const ASteerable& actor,
 {
     vec3 desiredPos = vec3(0);
     vec3 p = actor.getPosition();
+
     int n = 0;
     for (int i = 0; i < world.getNumAgents(); i++) {
         if (!(world.getAgent(i) == actor)) {
@@ -291,7 +295,7 @@ vec3 ACohesion::calculateDesiredVelocity(const ASteerable& actor,
 
     ASeek seeker = ASeek::ASeek();
 
-    return seeker.calculateDesiredVelocity(actor, world, desiredPos - p);
+    return seeker.calculateDesiredVelocity(actor, world, desiredPos);
 }
 
 //--------------------------------------------------------------
@@ -309,6 +313,7 @@ vec3 AAlignment::calculateDesiredVelocity(const ASteerable& actor,
 
     vec3 desiredVelocity = actor.getVelocity();
     vec3 p = actor.getPosition();
+
     int n = 0;
     float avgSpeed = 0;
     for (int i = 0; i < world.getNumAgents(); i++) {
@@ -324,34 +329,57 @@ vec3 AAlignment::calculateDesiredVelocity(const ASteerable& actor,
         }
     }
 
-    if (n == 0 || length(desiredVelocity) == 0) return desiredVelocity;
+    if (n == 0 || length(desiredVelocity) == 0) return vec3(0);
 
     avgSpeed /= n;
 
-    return normalize(desiredVelocity)*avgSpeed;
+    return normalize(desiredVelocity) * avgSpeed;
 }
 
 //--------------------------------------------------------------
 // Flocking behavior
 AFlocking::AFlocking() : ABehavior("Flocking")
 {
+    setParam("kSeparation", 1);
+    setParam("kCohesion", 1);
+    setParam("kAlignment", 1);
 }
 
 // Flocking combines separation, cohesion, and alignment
 vec3 AFlocking::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+
+    ASeparation separator = ASeparation::ASeparation();
+    ACohesion cohesioner = ACohesion::ACohesion();
+    AAlignment aligner = AAlignment::AAlignment();
+
+    vec3 sep = separator.calculateDesiredVelocity(actor, world, target);
+
+    sep = getParam("kSeparation") * sep;
+
+    vec3 coh = cohesioner.calculateDesiredVelocity(actor, world, target);
+
+    coh = getParam("kCohesion") * coh;
+
+    vec3 ali = aligner.calculateDesiredVelocity(actor, world, target);
+
+    ali = getParam("kAlignment") * ali;
+   
+    vec3 desiredVel = sep + coh + ali;
+
+    return desiredVel;
 }
 
 //--------------------------------------------------------------
 // Leader
 ALeader::ALeader() : ABehavior("Leader")
 {
-   setParam("CSeparation", 1);
-   setParam("CCohesion", 1);
-   setParam("CAlignment", 1);
+   setParam("CSeparation", 2);
+   setParam("CCohesion", 2);
+   setParam("CAlignment", 0.2);
    setParam("CArrival", 1);
+   setParam("buffer", -200);
 }
 
 // You need to find the leader, who is always the first agent in agents
@@ -360,7 +388,30 @@ ALeader::ALeader() : ABehavior("Leader")
 vec3 ALeader::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+    AArrival arriver = AArrival::AArrival();
+    if (actor == world.getAgent(0)) {
+        return arriver.calculateDesiredVelocity(actor, world, target);
+    }
+
+    vec3 leadPos = world.getAgent(0).getPosition();
+    vec3 leadVel = world.getAgent(0).getVelocity();
+    leadVel = (length(leadVel) == 0) ? normalize(world.getAgent(0).getRotation() * vec3(0, 0, 1)) : normalize(leadVel);
+
+    AFlocking flocker = AFlocking::AFlocking();
+
+    flocker.setParam("kSeparation", getParam("CSeparation"));
+    flocker.setParam("kCohesion", getParam("CCohesion"));
+    flocker.setParam("kAlignment", getParam("CAlignment"));
+
+    vec3 arr = arriver.calculateDesiredVelocity(actor, world, leadPos + leadVel*getParam("buffer"));
+
+    arr = getParam("CArrival") * arr;
+
+    vec3 flo = flocker.calculateDesiredVelocity(actor, world, target);
+
+    vec3 vFoll = arr + flo;
+
+   return vFoll;
 }
 
 

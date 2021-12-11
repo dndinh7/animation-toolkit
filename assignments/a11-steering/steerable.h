@@ -65,6 +65,8 @@ public:
 
    static bool kDebugDraw;
    static bool kDrawCharacter;
+
+
 };
 
 #endif

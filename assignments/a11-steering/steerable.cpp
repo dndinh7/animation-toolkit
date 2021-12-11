@@ -18,8 +18,7 @@ bool ASteerable::kDrawCharacter = true;
 ASteerable::ASteerable() :
    _id(counter++), _skeleton(), _drawer(), _walk(), _characterRoot(), 
    _time(0), _state{0,0,0,0}, _derivative{0,0,0,0}, _mass(1), _inertia(1),
-   _force(0), _torque(0), _vd(0), _thetad(0), 
-   _veld(0, 0, 0), _vel(0, 0, 0)
+   _force(0), _torque(0), _vd(0), _thetad(0), _veld(0, 0, 0), _vel(0, 0, 0)
 {
    _drawer.color = vec3(0,0,0.5);
 }

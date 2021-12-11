@@ -12,7 +12,7 @@ using namespace atk;
 ABehavior::ABehavior(const char* name) : _name(name)
 {
    // TODO: set good values
-   setParam("MaxSpeed", 150);
+   setParam("MaxSpeed", 250);
    setParam("AgentRadius", 100);
    setParam("Threshold", 50);
 }
@@ -95,7 +95,10 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
         speed = getParam("MaxSpeed");
     }
 
-    vec3 desired = (dist <= getParam("Threshold")) ? vec3(0) : (targetOffset / dist) * getParam("MaxSpeed");
+    vec3 desired = (dist <= getParam("Threshold")) ? vec3(0) : (targetOffset / dist) * speed;
+
+
+
     return desired;
 }
 

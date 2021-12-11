@@ -171,8 +171,6 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
         float angle = acos((dot(toTarget, actToCirc)) / (length(toTarget) * length(actToCirc)));
 
         float distToLine = sin(angle) * length(actToCirc);
-        std::cout << "dist: " << distToLine << std::endl;
-        std::cout << "rad: " << circRad << std::endl;
         if (distToLine <= circRad) {
             intersect = true;
             if (length(actToCirc) < length(closestObstacle - p)) {
@@ -255,7 +253,7 @@ vec3 ASeparation::calculateDesiredVelocity(const ASteerable& actor,
 
     if (length(desired) == 0) return vec3(0);
 
-    return normalize(desired) * getParam("MaxSpeed");;
+    return normalize(desired) * getParam("MaxSpeed");
 }
 
 
@@ -264,7 +262,7 @@ vec3 ASeparation::calculateDesiredVelocity(const ASteerable& actor,
 
 ACohesion::ACohesion() : ABehavior("Cohesion")
 {
-   setParam("Neighborhood", 1);
+   setParam("Neighborhood", 200);
    setParam("kCohesion", 1);
 }
 
@@ -272,14 +270,35 @@ ACohesion::ACohesion() : ABehavior("Cohesion")
 vec3 ACohesion::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-    return vec3(0,0,0);
+    vec3 desiredPos = vec3(0);
+    vec3 p = actor.getPosition();
+    int n = 0;
+    for (int i = 0; i < world.getNumAgents(); i++) {
+        if (!(world.getAgent(i) == actor)) {
+
+            vec3 pi = world.getAgent(i).getPosition();
+            if (length(p - pi) <= getParam("Neighborhood")) {
+                n++;
+                desiredPos += pi;
+
+            }
+        }
+    }
+
+    if (n == 0) return vec3(0);
+
+    desiredPos /= n;
+
+    ASeek seeker = ASeek::ASeek();
+
+    return seeker.calculateDesiredVelocity(actor, world, desiredPos - p);
 }
 
 //--------------------------------------------------------------
 // Alignment behavior
 AAlignment::AAlignment() : ABehavior("Alignment")
 {
-   setParam("Neighborhood", 1);
+   setParam("Neighborhood", 200);
    setParam("kAlignment", 1);
 }
 
@@ -287,7 +306,29 @@ AAlignment::AAlignment() : ABehavior("Alignment")
 vec3 AAlignment::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-    return vec3(0);
+
+    vec3 desiredVelocity = actor.getVelocity();
+    vec3 p = actor.getPosition();
+    int n = 0;
+    float avgSpeed = 0;
+    for (int i = 0; i < world.getNumAgents(); i++) {
+        if (!(world.getAgent(i) == actor)) {
+
+            vec3 va = world.getAgent(i).getVelocity();
+            if (length(p - world.getAgent(i).getPosition()) <= getParam("Neighborhood")) {
+                n++;
+                desiredVelocity += va;
+                avgSpeed += length(va);
+
+            }
+        }
+    }
+
+    if (n == 0 || length(desiredVelocity) == 0) return desiredVelocity;
+
+    avgSpeed /= n;
+
+    return normalize(desiredVelocity)*avgSpeed;
 }
 
 //--------------------------------------------------------------

@@ -71,7 +71,7 @@ AArrival::AArrival() : ABehavior("Arrival")
 {
    // TODO: Set good parameters
    setParam("kArrival", 1);
-   setParam("TargetRadius", 250);
+   setParam("TargetRadius", 500);
 }
 
 //
@@ -108,7 +108,7 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
    setParam("InnerRadius", 100);
-   setParam("OuterRadius", 250);
+   setParam("OuterRadius", 3000);
    setParam("kDeparture", 1);
 }
 

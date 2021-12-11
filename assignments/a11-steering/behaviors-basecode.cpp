@@ -108,7 +108,7 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
    setParam("InnerRadius", 100);
-   setParam("OuterRadius", 3000);
+   setParam("OuterRadius", 300);
    setParam("kDeparture", 1);
 }
 
